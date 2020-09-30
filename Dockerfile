@@ -1,5 +1,5 @@
 FROM node:10-alpine
-ENV PORT=80
+ENV PORT=8080
 WORKDIR /opt/app
 # Extras:
 RUN apk --update add make python gcc g++ libtool git autoconf automake

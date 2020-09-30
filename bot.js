@@ -8,7 +8,7 @@ const config = require('./data/config.json');
 const express = require('express')
 const mds = require('markdown-serve');
 const app = express();
-const port = 8118;
+const port = 8080;
 
 /** 
  * Initialise the Bots main Client Object 
