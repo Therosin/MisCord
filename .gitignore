@@ -11,3 +11,4 @@ yarn-error.log
 /data/config.json
 /data/*.sqlite3
 okteto.yml
+.env
