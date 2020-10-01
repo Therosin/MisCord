@@ -1,7 +1,9 @@
-#!/usr/bin/env node
+#! /usr/bin/env node
 const path = require('path');
 const { ShardingManager } = require('discord.js');
+
 const config = require('./data/config.json');
+
 const { TIMEOUT } = require('dns');
 
 /* eslint-disable no-console */
