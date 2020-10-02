@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const Utils = require("../../Modules/BotUtils")
+const Utils = require("../../util/BotUtils")
 
 module.exports = class MisDeleteServerCommand extends Command {
     constructor(client) {

@@ -1,21 +1,23 @@
 /* eslint-disable no-console */
-const commando = require('discord.js-commando');
+const Commando = require('discord.js-commando');
 const MisCord = require('./Modules/Client');
 const path = require('path');
 const oneLine = require('common-tags').oneLine;
 const sqlite = require('sqlite');
-const config = require('./data/config.json');
+const sqlite3 = require("sqlite3")
 const express = require('express')
 const mds = require('markdown-serve');
 const app = express();
 const port = 8080;
 
+require('dotenv').config()
+
 /** 
  * Initialise the Bots main Client Object 
  * */
 const client = new MisCord({
-	owner: config.OwnerID,
-	commandPrefix: config.Prefix
+	owner: process.env.DISCORD_OWNER_ID,
+	commandPrefix: process.env.DISCORD_PREFIX
 });
 
 
@@ -100,12 +102,13 @@ client.on('message', async message => {
 });
 
 client
-	.setProvider(sqlite.open(path.join(__dirname, './data/settings.sqlite3')).then(db => new commando.SQLiteProvider(db)))
+	.setProvider(sqlite.open({ filename: path.join(__dirname, "./data/settings.sqlite3"), driver: sqlite3.Database}).then(db => new Commando.SQLiteProvider(db)))
 	.catch(client.logger);
 
 client.registry
 	.registerGroup('general', 'General')
 	.registerGroup('servers', 'Servers')
+	.registerGroup('whitelist', 'Whitelist')
 	.registerDefaults()
 	.registerTypesIn(path.join(__dirname, 'types'))
 	.registerCommandsIn(path.join(__dirname, 'commands'));

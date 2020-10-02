@@ -1,6 +1,6 @@
-title: CleverCord
-published: 2019-02-03 00:53:00
+title: MisCord
+published: 20-10-02 21:55:00
 
 ---
 
-_CleverCord is online_
+_MisCord is online_

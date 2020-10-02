@@ -8,6 +8,8 @@ yarn-error.log
 # EXTRA
 .openode
 # CONFIG
+.env
+.env.*
 /data/config.json
 /data/*.sqlite3
 okteto.yml
