@@ -3,6 +3,11 @@ module.exports = class MiscreatedServers {
         this.client = client;
     }
 
+    /**
+     * find a specific server by guildId and server Object
+     * @param {string} guild guildId of guild to fetch a server for
+     * @param {object} server and object defining properties to filter by
+     */
     getServer(guild, server) {
         return new Promise(async (fulfill, reject) => {
             try {
@@ -17,6 +22,10 @@ module.exports = class MiscreatedServers {
         });
     }
 
+    /**
+     * fetch all servers belonging to a guild
+     * @param {string} guild guildId to fetch servers for
+     */
     getServers(guild) {
         return new Promise(async (fulfill, reject) => {
             try {
@@ -32,6 +41,11 @@ module.exports = class MiscreatedServers {
 
     }
 
+    /**
+     * Create a new Server
+     * @param {string} guild 
+     * @param {object} server {ip,name,gameport,rconport,rconpass,secret: string}
+     */
     addServer(guild, server) {
         let server_data = {
             server_ip: server.ip,
@@ -56,7 +70,11 @@ module.exports = class MiscreatedServers {
         })
     }
 
-
+    /**
+     * delete a server by guildId and serverId
+     * @param {string} guild guildId of guild that owns the server
+     * @param {string} serverId serverId of the server to delete
+     */
     delServer(guild, serverId) {
         let server = {
             server_id: serverId
