@@ -4,6 +4,7 @@ const { stripIndents } = require('common-tags');
 const moment = require('moment');
 
 module.exports = class BotUtils {
+
 	static randomInt(low, high) {
 		// eslint-disable-next-line no-mixed-operators
 		return Math.floor(Math.random() * (high - low + 1) + low);

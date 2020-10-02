@@ -1,5 +1,4 @@
 const { Command } = require('discord.js-commando');
-
 const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop")
 
@@ -62,14 +61,26 @@ module.exports = class MisShowWhitelistCommand extends Command {
 
                 })
                     //* Fetched ServerInfo
-                    .then(whitelist => {
+                    .then(async whitelist => {
                         if (whitelist && Array.isArray(whitelist)) {
                             let message_text = `__Whitelist__\n`
                             if (whitelist.length >= 1) {
-                                whitelist.forEach(steamId => {
-                                    let playerDetail = `\n > **SteamId**: ${steamId} [ [rep](https://steamrep.com/search?q=${steamId}) ]`
-                                    message_text += playerDetail
-                                })
+                                for (const steamId of whitelist) {
+                                    await this.client.SteamWebApi.getSteamProfile(steamId).then(profile => {
+                                        let playerDetail = `\n > **SteamId**: ${steamId} `
+                                        if (profile) {
+                                            let communityVisability = "Unknown"
+                                            if (profile.visibilityState) {
+                                                if (profile.visibilityState === 1) { communityVisability = "Private" }
+                                                if (profile.visibilityState === 2) { communityVisability = "FriendsOnly" }
+                                                if (profile.visibilityState === 3) { communityVisability = "Public" }
+                                            }
+                                            playerDetail += `\n >    **SteamName**: [${profile.nickname}](${profile.url}) | **SteamPrivacy**:${communityVisability}`
+                                        }
+                                        playerDetail += ` [ [rep](https://steamrep.com/search?q=${steamId}) ]\n`
+                                        message_text += playerDetail
+                                    })
+                                }
                             } else {
                                 message_text += "\n NO PLAYERS IN WHITELIST"
                             }

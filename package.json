@@ -28,6 +28,7 @@
     "node-misrcon": "^2.2.4",
     "sqlite": "^4.0.15",
     "sqlite3": "^5.0.0",
+    "steamapi": "^2.1.2",
     "winston": "^3.3.3"
   }
 }
