@@ -1,3 +1,11 @@
+// Theros#7648 @ SvalTek
+// ──────────────────────────────────────────────────────────────────────────── I ──────────
+//   :::::: M I S C R E A T E D   S E R V E R S : :  :   :    :     :        :          :
+// ──────────────────────────────────────────────────────────────────────────────────────
+// Handles management of MongoDB Database Entries for each Guilds Miscreated Servers.
+
+"use strict"
+
 module.exports = class MiscreatedServers {
     constructor(client) {
         this.client = client;

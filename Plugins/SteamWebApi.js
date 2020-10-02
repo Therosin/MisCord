@@ -1,3 +1,11 @@
+// Theros#7648 @ SvalTek
+// ────────────────────────────────────────────────────────────── I ──────────
+//   :::::: S T E A M W E B A P I : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────────────────────
+// Handles making requests to SteamWebapi for getting player Profile info
+
+
+
 const SteamAPI = require("steamapi")
 require('dotenv').config()
 
