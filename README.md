@@ -1,22 +1,21 @@
 # MisCord
+
 A discord bot for Miscreated Community Server Admins.
 
 
 
 NOTICE:
 
-	This Project is Currently under active Development. as such the Codebase is Unstable and is Likely to (It Will)
-	
-	change on a regular basis. the `master` branch will always have the **latest** *working release* and all active development will be kept to the development branch, this means the master branch will often become stale and outdated. but will always have the most recent "stable" code
-	while the Development Branch will have the latest and  greatest changes but may break at anytime, i will use tagged releases to define working builds at each major change but smaller feature changes and hotfixes will Not be tagged.
-	
-	Developers & Those using the Development Branch i Suggest you use specific Commits or Releases when cloning to avoid issues and update only when a release is tagged.
+> This Project is Currently under active Development. as such the Codebase is Unstable and is Likely to (It Will) change on a regular basis.
+
+> The `master` branch will always have the **latest** *working release* and all active development will be kept to the development branch, this means the master branch will often become stale and outdated. but will always have the most recent "stable" code
+> while the Development Branch will have the latest and  greatest changes but may break at anytime, i will use tagged releases to define working builds at each major change but smaller feature changes and hotfixes will Not be tagged.
+
+> Developers & Those using the Development Branch i Suggest you use specific Commits or Releases when cloning to avoid issues and update only when a release is tagged.
 
 
 
-
-
-the default bot prefix is `m>`
+_The default bot prefix is_: `m>`
 
 __Currently Implemented Features__:
 
