@@ -50,6 +50,6 @@ __Currently Implemented Features__:
 
 __Instructions__:
 
-For Setup & Usage info check out the Wiki: [MisCord: Setup and Config](https://github.com/Therosin/MisCord/wiki/MisCord:-Setup-and-Config)
+For Setup & Usage info check out the Wiki: [MisCord: Setup and Config](https://github.com/Therosin/MisCord/wiki/1-MisCord:-Setup-and-Config)
 
 For Building and Development Docs checkout the Wiki: [Development Info](https://github.com/Therosin/MisCord/wiki/11-Development-Info)
