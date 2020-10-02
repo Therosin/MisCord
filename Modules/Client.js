@@ -23,7 +23,7 @@ module.exports = class Miscord extends CommandoClient {
 			)
 		});
 		this.webhook = new WebhookClient(config.WebhookID, config.WebhookTOKEN, { disableEveryone: true });
-		this.database = new database(this)
+		//this.database = new database(this)
 		this.db = new MongoDatabase(this)
 		this.MiscreatedServers = new MiscreatedServers(this)
 	}

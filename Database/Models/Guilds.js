@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 
-const Guild = new Schema({
+const Guilds = new Schema({
     id: String,
     prefix: {
         default: 'm>',
@@ -9,4 +9,4 @@ const Guild = new Schema({
     }
 });
 
-module.exports = model('Guild', Guild)
+module.exports = model('Guilds', Guilds,"Guilds")

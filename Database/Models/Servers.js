@@ -1,8 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 
-const Server = new Schema({
-  id: String,
+const Servers = new Schema({
   guild: String,
   server_id: String,
   server_name: String,
@@ -13,4 +12,4 @@ const Server = new Schema({
   server_authkey: String,
 });
 
-module.exports = model('Server', Server)
+module.exports = model('Servers', Servers, "Servers")

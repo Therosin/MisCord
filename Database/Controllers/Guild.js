@@ -1,4 +1,4 @@
-const GuildModel = require('../Models/Guild')
+const GuildModel = require('../Models/Guilds')
 
 
 module.exports = class GuildController {

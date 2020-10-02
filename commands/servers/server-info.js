@@ -1,6 +1,6 @@
 const { Command } = require('discord.js-commando');
 
-const Utils = require("../../Modules/BotUtils")
+const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop")
 
 function genPlayerList(server, message_text) {

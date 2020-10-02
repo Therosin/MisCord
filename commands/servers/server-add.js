@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const Utils = require("../../Modules/BotUtils")
+const Utils = require("../../util/BotUtils")
 
 module.exports = class MisAddServerCommand extends Command {
 	constructor(client) {
@@ -52,9 +52,7 @@ module.exports = class MisAddServerCommand extends Command {
 		 * Create a temporary `server` object for the entered parameters all are require
 		 */
 
-		let server_id = Math.random().toString(36).slice(-6);
 		let server = {
-			"id": server_id,
 			"name": args.name,
 			"ip": args.ip,
 			"gameport": args.gameport,
@@ -64,14 +62,13 @@ module.exports = class MisAddServerCommand extends Command {
 		}
 
 		return new Promise(async (fulfill, reject) => {
-			try {
-				fulfill(await this.client.MiscreatedServers.addServer(message.guild.id, server))
-			} catch (err) {
-				reject(err)
-			}
+			await this.client.MiscreatedServers.addServer(message.guild.id, server)
+				.then(result => { fulfill(result) })
+				.catch(err => { reject(err) })
+
 		}).then(result => {
 			//! Server Created
-			let embed = Utils.generateSuccessEmbed(`Server added, ID: ${server_id}!`, "Create Server, OK!!", result)
+			let embed = Utils.generateSuccessEmbed(`Server added, ID: ${result}`, "Create Server, OK!!")
 			message.say(embed)
 		}).catch(err => {
 			//! Failed to Create server

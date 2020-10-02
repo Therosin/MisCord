@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const Utils = require("../../Modules/BotUtils")
+const Utils = require("../../util/BotUtils")
 
 module.exports = class MisServerListCommand extends Command {
     constructor(client) {
@@ -31,7 +31,7 @@ module.exports = class MisServerListCommand extends Command {
             } else {
                 let text = ""
                 data.forEach(server => {
-                    let line = `\n  __**Name**__: ${server.server_name} | id: ${server.server_id}\n **hostname/ip**: ${server.server_ip}\n **gameport**: ${server.server_gameport} | **rconport**: ${server.server_rconport}\n`
+                    let line = `\n  [__**Name**__]: ${server.server_name} | [id]: ${server.server_id}\n [**hostname/ip**]: ${server.server_ip}\n [**gameport**]: ${server.server_gameport} | [**rconport**]: ${server.server_rconport}\n`
                     text = text + line
                 });
 

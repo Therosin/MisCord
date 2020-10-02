@@ -1,5 +1,5 @@
 /* eslint-disable new-cap */
-const { RichEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const { stripIndents } = require('common-tags');
 const moment = require('moment');
 
@@ -45,7 +45,7 @@ module.exports = class BotUtils {
 	}
 
 	static generateEmbed(message, title, description) {
-		let embed = new RichEmbed()
+		let embed = new MessageEmbed()
 			.addField(`__**${title}.**__`, `${message}`)
 		if (description != undefined) {
 			embed.addField("info:", `_ ${description}_`)

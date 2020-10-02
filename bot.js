@@ -1,9 +1,10 @@
 /* eslint-disable no-console */
-const commando = require('discord.js-commando');
+const Commando = require('discord.js-commando');
 const MisCord = require('./Modules/Client');
 const path = require('path');
 const oneLine = require('common-tags').oneLine;
 const sqlite = require('sqlite');
+const sqlite3 = require("sqlite3")
 const config = require('./data/config.json');
 const express = require('express')
 const mds = require('markdown-serve');
@@ -100,7 +101,7 @@ client.on('message', async message => {
 });
 
 client
-	.setProvider(sqlite.open(path.join(__dirname, './data/settings.sqlite3')).then(db => new commando.SQLiteProvider(db)))
+	.setProvider(sqlite.open({ filename: path.join(__dirname, "./data/settings.sqlite3"), driver: sqlite3.Database}).then(db => new Commando.SQLiteProvider(db)))
 	.catch(client.logger);
 
 client.registry
