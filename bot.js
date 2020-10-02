@@ -5,18 +5,19 @@ const path = require('path');
 const oneLine = require('common-tags').oneLine;
 const sqlite = require('sqlite');
 const sqlite3 = require("sqlite3")
-const config = require('./data/config.json');
 const express = require('express')
 const mds = require('markdown-serve');
 const app = express();
 const port = 8080;
 
+require('dotenv').config()
+
 /** 
  * Initialise the Bots main Client Object 
  * */
 const client = new MisCord({
-	owner: config.OwnerID,
-	commandPrefix: config.Prefix
+	owner: process.env.DISCORD_OWNER_ID,
+	commandPrefix: process.env.DISCORD_PREFIX
 });
 
 
