@@ -107,6 +107,7 @@ client
 client.registry
 	.registerGroup('general', 'General')
 	.registerGroup('servers', 'Servers')
+	.registerGroup('whitelist', 'Whitelist')
 	.registerDefaults()
 	.registerTypesIn(path.join(__dirname, 'types'))
 	.registerCommandsIn(path.join(__dirname, 'commands'));
