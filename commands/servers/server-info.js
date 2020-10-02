@@ -3,19 +3,30 @@ const { Command } = require('discord.js-commando');
 const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop")
 
-function genPlayerList(server, message_text) {
-    return new Promise((fulfill, reject) => {
+function genPlayerList(server, message_text,SteamWebApi) {
+    return new Promise(async (fulfill, reject) => {
         if (!server || !message_text) { reject("Inavalid params") }
         if (server.playersArray && Array.isArray(server.playersArray)) {
-            server.playersArray.forEach(player => {
-
+            for (const player of server.playersArray) {
                 let playerDetail = `\n > **Name**: ${player.name}    **SteamID**: ${player.steam}[ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping} **entity**: ${player.entID}`
+                await SteamWebApi.getSteamProfile(player.steam).then(profile => {
+                    if (profile) {
+                        let communityVisability = "Unknown"
+                        if (profile.visibilityState) {
+                            if (profile.visibilityState === 1) { communityVisability = "Private" }
+                            if (profile.visibilityState === 2) { communityVisability = "FriendsOnly" }
+                            if (profile.visibilityState === 3) { communityVisability = "Public" }
+                        }
+                        playerDetail += `\n >    **SteamName**: [${profile.nickname}](${profile.url}) | **SteamPrivacy**:${communityVisability}`
+                    }
+                })
                 message_text += playerDetail
-            })
+            }
             fulfill(message_text)
         }
     })
 }
+
 
 
 module.exports = class MisServerInfoCommand extends Command {
@@ -33,7 +44,7 @@ module.exports = class MisServerInfoCommand extends Command {
             args: [
                 {
                     key: 'serverId',
-                    prompt: 'enter the serverId to delete',
+                    prompt: 'enter the serverId to get info for',
                     type: 'string',
                 },
             ]
@@ -92,7 +103,7 @@ __Weather__
 > **Current**: ${server.weather} [weatherPattern: ${server.weatherPattern}]
 
 __Players__:                      [online:${server.players}]`
-                            return genPlayerList(server, message_text).then(message_text => {
+                            return genPlayerList(server, message_text,this.client.SteamWebApi).then(message_text => {
 
                                 let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
                                 message.say(embed)
