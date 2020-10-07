@@ -2,7 +2,6 @@ const exec = require('child_process').exec;
 const { CommandoClient } = require('discord.js-commando');
 const { WebhookClient } = require('discord.js');
 const winston = require('winston');
-const config = require('../data/config.json');
 const MiscreatedServers = require('../Plugins/MiscreatedServers');
 const SteamWebApi = require('../Plugins/SteamWebApi')
 const MongoDatabase = require('../Database/MongoDB');
@@ -12,7 +11,7 @@ const MongoDatabase = require('../Database/MongoDB');
 
 
 module.exports = class Miscord extends CommandoClient {
-	constructor(options) {
+	constructor(options,config) {
 		super(options);
 
 		this.logger = winston.createLogger({
@@ -22,8 +21,7 @@ module.exports = class Miscord extends CommandoClient {
 				winston.format.printf(log => `[${log.timestamp}] [${log.level.toUpperCase()}]: ${log.message}`)
 			)
 		});
-		this.webhook = new WebhookClient(config.WebhookID, config.WebhookTOKEN, { disableEveryone: true });
-		//this.database = new database(this)
+		this.webhook = new WebhookClient(config.WEBHOOK_ID, config.WEBHOOK_TOKEN, { disableEveryone: true });
 		this.db = new MongoDatabase(this)
 		this.MiscreatedServers = new MiscreatedServers(this)
 		this.SteamWebApi = new SteamWebApi(this)
