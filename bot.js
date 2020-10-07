@@ -11,14 +11,19 @@ const app = express();
 const port = 8080;
 
 require('dotenv').config()
-
+let config = {
+	WEBHOOK_ID: process.env.WEBHOOK_ID,
+	WEBHOOK_TOKEN: process.env.WEBHOOK_TOKEN,
+	DISCORD_OWNER_ID: process.env.DISCORD_OWNER_ID,
+	DISCORD_PREFIX: process.env.DISCORD_PREFIX
+}
 /** 
  * Initialise the Bots main Client Object 
  * */
 const client = new MisCord({
-	owner: process.env.DISCORD_OWNER_ID,
-	commandPrefix: process.env.DISCORD_PREFIX
-});
+	owner: config.DISCORD_OWNER_ID,
+	commandPrefix: config.DISCORD_PREFIX
+}, config);
 
 
 //
@@ -102,7 +107,7 @@ client.on('message', async message => {
 });
 
 client
-	.setProvider(sqlite.open({ filename: path.join(__dirname, "./data/settings.sqlite3"), driver: sqlite3.Database}).then(db => new Commando.SQLiteProvider(db)))
+	.setProvider(sqlite.open({ filename: path.join(__dirname, "./data/settings.sqlite3"), driver: sqlite3.Database }).then(db => new Commando.SQLiteProvider(db)))
 	.catch(client.logger);
 
 client.registry
@@ -113,7 +118,6 @@ client.registry
 	.registerTypesIn(path.join(__dirname, 'types'))
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
-client.custconfig = config;
 client.login(config.token).catch(err => {
 	client.logger.error(err);
 });
