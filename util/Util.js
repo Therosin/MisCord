@@ -59,6 +59,20 @@ module.exports = class Util {
 		return crypto.createHash(algorithm).update(text).digest('hex');
 	}
 
+	static encrypt_data(data, key) {
+		var cipher = crypto.createCipheriv('aes-256-cbc', key);
+		var crypted = cipher.update(data, 'utf-8', 'hex');
+		crypted += cipher.final('hex');
+		return crypted;
+	}
+
+	static decrypt_data(data, key) {
+		var decipher = crypto.createDecipheriv('aes-256-cbc', key);
+		var decrypted = decipher.update(data, 'hex', 'utf-8');
+		decrypted += decipher.final('utf-8');
+		return decrypted;
+	}
+
 	static today(timeZone) {
 		const now = new Date();
 		if (timeZone) now.setUTCHours(timeZone);

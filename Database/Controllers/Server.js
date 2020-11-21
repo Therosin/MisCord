@@ -1,9 +1,11 @@
 const ServerModel = require('../Models/Servers')
-
-
+const Utils = require("../../util/Util")
+require('dotenv').config()
+let secret = ""
 module.exports = class ServerController {
     constructor(client) {
         this.client = client;
+        secret = process.env.SECRET;
     }
 
     addServer(guild, server) {
@@ -16,8 +18,8 @@ module.exports = class ServerController {
                 server_ip: server.ip,
                 server_gameport: server.gameport,
                 server_rconport: server.rconport,
-                server_password: server.password,
-                server_authkey: server.authkey
+                server_password: Utils.encrypt_data(server.password, secret),
+                server_authkey: Utils.encrypt_data(server.authkey, secret)
             })
 
             await doc.save()
@@ -55,6 +57,8 @@ module.exports = class ServerController {
             if (!server) {
                 resolve(server)
             } else {
+                server.password = Utils.decrypt_data(server.password, secret)
+                server.authkey = Utils.decrypt_data(server.authkey, secret)
                 resolve(server)
             }
         })
