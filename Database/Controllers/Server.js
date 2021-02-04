@@ -57,8 +57,8 @@ module.exports = class ServerController {
             if (!server) {
                 resolve(server)
             } else {
-                server.password = Utils.decrypt_data(server.password, secret)
-                server.authkey = Utils.decrypt_data(server.authkey, secret)
+                server.server_password = Utils.decrypt_data(server.server_password, secret)
+                server.server_authkey = Utils.decrypt_data(server.server_authkey, secret)
                 resolve(server)
             }
         })
