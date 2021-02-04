@@ -12,7 +12,7 @@ const manager = new ShardingManager(path.join(__dirname, 'bot.js'), {
 	token: process.env.DISCORD_TOKEN,
 	totalShards: 1,
 	shardArgs: {
-		TIMEOUT: 45
+		TIMEOUT: 120
 	},
 	respawn: true,
 	mode: 'worker'
