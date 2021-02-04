@@ -82,7 +82,7 @@ module.exports = class MisServerInfoCommand extends Command {
                             reject(err)
                         }
                     } else {
-                        console.log(result)
+                        if (this.client.isDebugBuild) { console.log(result) };
                         reject(`Invalid ServerData Please remove and Re add server: ${serverId} \n _this shouldnt happen if you keep seeing this message please report it as a bug_`)
                     }
 
@@ -91,7 +91,7 @@ module.exports = class MisServerInfoCommand extends Command {
                     .then(server => {
                         if (server && server.name != undefined) {
                             //debugging
-                            console.log(server)
+                            if (this.client.isDebugBuild) { console.log(result) };
                             let message_text = `
 __ServerName__: ${server.name} \n[ ip: ${server.ip} version: ${server.version} ]
 > **Current Map**: ${server.level}    **gameRules** : ${server.gameRules}
