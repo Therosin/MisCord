@@ -128,7 +128,7 @@ app.set('view engine', 'jade');
 
 app.use(
 	mds.middleware({
-		rootDirectory: path.resolve(__dirname, 'public'),
+		rootDirectory: path.resolve(__dirname, 'Public'),
 		view: 'markdown'
 	})
 );
