@@ -52,7 +52,7 @@ module.exports = class MiscreatedInterop {
      * @param {string} steamId 
      */
     async whitelistPlayer(steamId) {
-        return await this.server.send('mis_whitelist_add' + steamId)
+        return await this.server.send('mis_whitelist_add ' + steamId)
     }
     /**
      * * unwhitelistPlayer(steamId)
