@@ -14,3 +14,5 @@ yarn-error.log
 /data/*.sqlite3
 okteto.yml
 .env
+
+package-lock.json
