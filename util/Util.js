@@ -59,15 +59,17 @@ module.exports = class Util {
 		return crypto.createHash(algorithm).update(text).digest('hex');
 	}
 
+	static initialization_vector = "X05IGQ5qdBnIqAWD";
+
 	static encrypt_data(data, key) {
-		var cipher = crypto.createCipheriv('aes-256-cbc', key);
+		var cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(key), Buffer.from(this.initialization_vector));
 		var crypted = cipher.update(data, 'utf-8', 'hex');
 		crypted += cipher.final('hex');
 		return crypted;
 	}
 
 	static decrypt_data(data, key) {
-		var decipher = crypto.createDecipheriv('aes-256-cbc', key);
+		var decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), Buffer.from(this.initialization_vector));
 		var decrypted = decipher.update(data, 'hex', 'utf-8');
 		decrypted += decipher.final('utf-8');
 		return decrypted;
