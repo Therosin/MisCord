@@ -106,14 +106,15 @@ client.on('message', async message => {
 	//await client.levels.giveGuildUserExp(message.guild.members.get(message.author.id), message);
 });
 
-client
-	.setProvider(sqlite.open({ filename: path.join(__dirname, "./data/settings.sqlite3"), driver: sqlite3.Database }).then(db => new Commando.SQLiteProvider(db)))
-	.catch(client.logger);
+// client
+// 	.setProvider(sqlite.open({ filename: path.join(__dirname, "./data/settings.sqlite3"), driver: sqlite3.Database }).then(db => new Commando.SQLiteProvider(db)))
+// 	.catch(client.logger);
 
 client.registry
 	.registerGroup('general', 'General')
 	.registerGroup('servers', 'Servers')
 	.registerGroup('whitelist', 'Whitelist')
+	.registerGroup('banlist', 'Banlist')
 	.registerDefaults()
 	.registerTypesIn(path.join(__dirname, 'types'))
 	.registerCommandsIn(path.join(__dirname, 'commands'));

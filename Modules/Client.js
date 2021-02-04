@@ -14,6 +14,7 @@ module.exports = class Miscord extends CommandoClient {
 	constructor(options,config) {
 		super(options);
 
+		this.isDebugBuild = false
 		this.logger = winston.createLogger({
 			transports: [new winston.transports.Console()],
 			format: winston.format.combine(
