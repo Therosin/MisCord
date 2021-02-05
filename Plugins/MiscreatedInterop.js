@@ -110,14 +110,11 @@ module.exports = class MiscreatedInterop {
      * @param {string} restartMessage optional Restart Announcement
      */
     async restartServer(restartTime, restartMessage) {
-        let time = "60"
-        if (restartMessage != null || "") {
-            let tmp_time = 60 * parseInt(restartTime)
-            time = toString(tmp_time)
-        }
-        if (restartMessage != null || "") {
+        let time = parseInt(restartTime|| "1") * 60
+        restartTime = time.toString()
+        if (restartMessage != null) {
             await this.sendMessage(restartMessage)
         }
-        return await this.server.send(`do_shutdown ${time}`)
+        return await this.server.send(`do_shutdown ${restartTime}`)
     }
 }
