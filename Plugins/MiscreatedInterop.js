@@ -90,4 +90,34 @@ module.exports = class MiscreatedInterop {
     async unbanPlayer(steamId) {
         return await this.server.send('mis_unban_steamId ' + steamId)
     }
+
+    //
+    // ───────────────────────────────────────────────────────────── SERVER TOOLS ─────
+    //
+    /**
+     * send ingame Chat message as this Server
+     * @param {string} message message to send
+     */
+    async sendMessage(message) {
+        if (message) {
+            return await this.server.send(`sv_say ${message}`)
+        }
+    }
+
+    /**
+     * send a restart request to this server, optionaly sends message announcement
+     * @param {string} restartTime Time until restart in Minutes (must be a string)
+     * @param {string} restartMessage optional Restart Announcement
+     */
+    async restartServer(restartTime, restartMessage) {
+        let time = "60"
+        if (restartMessage != null || "") {
+            let tmp_time = 60 * Number.parseInt(restartTime)
+            time = toString(tmp_time)
+        }
+        if (restartMessage != null || "") {
+            await this.sendMessage(restartMessage)
+        }
+        return await this.server.send(`do_shutdown ${time}`)
+    }
 }
