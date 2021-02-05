@@ -91,7 +91,7 @@ module.exports = class MisServerInfoCommand extends Command {
                     .then(server => {
                         if (server && server.name != undefined) {
                             //debugging
-                            if (this.client.isDebugBuild) { console.log(result) };
+                            if (this.client.isDebugBuild) { console.log(server||"no server data") };
                             let message_text = `
 __ServerName__: ${server.name} \n[ ip: ${server.ip} version: ${server.version} ]
 > **Current Map**: ${server.level}    **gameRules** : ${server.gameRules}
@@ -101,6 +101,9 @@ __Server Time__:                  [ingame:${server.time}]
 
 __Weather__
 > **Current**: ${server.weather} [weatherPattern: ${server.weatherPattern}]
+
+__Direct Connect__
+> Join Server: steam://run/299740/connect/+connect ${result.server_ip} ${result.server_gameport}
 
 __Players__:                      [online:${server.players}]`
                             return genPlayerList(server, message_text,this.client.SteamWebApi).then(message_text => {
