@@ -106,7 +106,7 @@ module.exports = class MiscreatedInterop {
 
     /**
      * send a restart request to this server, optionaly sends message announcement
-     * @param {string} restartTime Time until restart in Minutes (must be a string)
+     * @param {string} restartTime Time until restart in Minutes (must be a string) default 1min
      * @param {string} restartMessage optional Restart Announcement
      */
     async restartServer(restartTime, restartMessage) {
