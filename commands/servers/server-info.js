@@ -103,7 +103,7 @@ __Weather__
 > **Current**: ${server.weather} [weatherPattern: ${server.weatherPattern}]
 
 __Direct Connect__
-> Join Server: steam://run/299740/connect/+connect ${result.server_ip} ${result.server_gameport}
+> Join Server: steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
 
 __Players__:                      [online:${server.players}]`
                             return genPlayerList(server, message_text,this.client.SteamWebApi).then(message_text => {
