@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@keyv/mongo": "^1.1.0",
+    "commando-provider-mongo": "^2.0.2",
     "discord.js": "^12.3.1",
     "discord.js-commando": "discordjs/Commando",
     "dotenv": "^8.2.0",

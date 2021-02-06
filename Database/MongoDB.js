@@ -1,6 +1,6 @@
 /* eslint-disable no-shadow */
 /* eslint-disable consistent-return */
-const { connect } = require('mongoose')
+const { connect, connection } = require('mongoose')
 
 require('dotenv').config()
 const MONGOCFG = {
@@ -13,6 +13,7 @@ const MONGOCFG = {
 const GuildController = require('./Controllers/Guild.js')
 const ServerController = require('./Controllers/Server.js')
 
+const MongoDBProvider = require('commando-provider-mongo').MongoDBProvider;
 
 module.exports = class MongoDatabase {
     constructor(client) {
@@ -28,6 +29,10 @@ module.exports = class MongoDatabase {
                 })
         })().then(() => {
             this.client.logger.info("[DATABASE] Connection to Database Succeded [MongoDB Connect]")
+            this.client.logger.info("Set Client Provider as MongoDB")
+            this.client.setProvider(
+                new MongoDBProvider(connection.getClient(), 'MisCordDev')
+            ).catch(client.logger.error);
             this.GuildController = new GuildController(client)
             this.ServerController = new ServerController(client)
         }).catch(err => {

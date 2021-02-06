@@ -1,10 +1,16 @@
 /* eslint-disable no-console */
-const Commando = require('discord.js-commando');
+
+// Bot Dependancies
 const MisCord = require('./Modules/Client');
+const MongoDBProvider = require('commando-provider-mongo').MongoDBProvider;
+const { connection } = require('mongoose')
+const db = connection
+
+// General
 const path = require('path');
 const oneLine = require('common-tags').oneLine;
-const sqlite = require('sqlite');
-const sqlite3 = require("sqlite3")
+
+// APIServ
 const express = require('express')
 const mds = require('markdown-serve');
 const app = express();
@@ -17,6 +23,7 @@ let config = {
 	DISCORD_OWNER_ID: process.env.DISCORD_OWNER_ID,
 	DISCORD_PREFIX: process.env.DISCORD_PREFIX
 }
+
 /** 
  * Initialise the Bots main Client Object 
  * */
@@ -58,26 +65,26 @@ client
 client
 	.on('commandError', (command, err) => client.logger.error(`[COMMAND:${command.name}]\n${err.stack}`))
 	.on('commandBlocked', (msg, reason) => {
-		client.logger(oneLine`
+		client.logger.error(oneLine`
 			Command ${msg.command ? `${msg.command.groupID}:${msg.command.memberName}` : ''}
 			blocked; ${reason}
 		`);
 	})
 	.on('commandPrefixChange', (guild, prefix) => {
-		client.logger(oneLine`
+		client.logger.info(oneLine`
 			Prefix ${prefix === '' ? 'removed' : `changed to ${prefix || 'the default'}`}
 			${guild ? `in guild ${guild.name} (${guild.id})` : 'globally'}.
 		`);
 	})
 	.on('commandStatusChange', (guild, command, enabled) => {
-		client.logger(oneLine`
+		client.logger.info(oneLine`
 			Command ${command.groupID}:${command.memberName}
 			${enabled ? 'enabled' : 'disabled'}
 			${guild ? `in guild ${guild.name} (${guild.id})` : 'globally'}.
 		`);
 	})
 	.on('groupStatusChange', (guild, group, enabled) => {
-		client.logger(oneLine`
+		client.logger.info(oneLine`
 			Group ${group.id}
 			${enabled ? 'enabled' : 'disabled'}
 			${guild ? `in guild ${guild.name} (${guild.id})` : 'globally'}.
@@ -105,10 +112,6 @@ client.on('message', async message => {
 	// Levels not in use
 	//await client.levels.giveGuildUserExp(message.guild.members.get(message.author.id), message);
 });
-
-// client
-// 	.setProvider(sqlite.open({ filename: path.join(__dirname, "./data/settings.sqlite3"), driver: sqlite3.Database }).then(db => new Commando.SQLiteProvider(db)))
-// 	.catch(client.logger);
 
 client.registry
 	.registerGroup('general', 'General')
