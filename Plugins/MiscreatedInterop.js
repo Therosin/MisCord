@@ -2,7 +2,7 @@
 // ──────────────────────────────────────────────────────────────────────────── I ──────────
 //   :::::: M I S C R E A T E D   I N T E R O P : :  :   :    :     :        :          :
 // ──────────────────────────────────────────────────────────────────────────────────────
-// Handles interaction Between MisCord and Miscreated Server Instances over HTTP or RCON
+// Handles interaction Between MisCord and Miscreated Server Instances over RCON
 
 "use strict";
 
@@ -88,7 +88,7 @@ module.exports = class MiscreatedInterop {
      * @param {string} steamId 
      */
     async unbanPlayer(steamId) {
-        return await this.server.send('mis_unban_steamId ' + steamId)
+        return await this.server.send('mis_ban_remove ' + steamId)
     }
 
     //
