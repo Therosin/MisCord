@@ -45,10 +45,14 @@ client
 			process.exit(0);
 		}
 		client.logger.info(`[READY] Logged in as ${client.user.tag}! ID: ${client.user.id}`);
-		// client.setInterval(() => {
-		// 	const activity = activities[Math.floor(Math.random() * activities.length)];
-		// 		if (client.settings.serverActivity) { client.user.setActivity(activity.text, { type: activity.type }); };
-		// }, 60000);
+		client.setInterval(() => {
+			client.MiscreatedServers.getServerCount().then((serverCount) => {
+				client.user.setActivity(`over ${serverCount} Servers`, { type: 'WATCHING' })
+			}).catch((err) => {
+				client.logger.error(err)
+			})
+		}, 60000);
+		
 	})
 	// Bot Got Disconnected from Discord
 	.on('disconnect', event => {

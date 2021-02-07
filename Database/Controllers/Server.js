@@ -37,6 +37,17 @@ module.exports = class ServerController {
         })
     }
 
+    getServerCount(guild) {
+        return new Promise((resolve, reject) => {
+            ServerModel.estimatedDocumentCount()
+                .then(docCount => {
+                    resolve(docCount)
+                })
+                .catch(err => {
+                    reject(err)
+                })
+        })
+    }
 
     getServers(guild) {
         return new Promise(async (resolve, reject) => {

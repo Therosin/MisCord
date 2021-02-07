@@ -11,6 +11,25 @@ module.exports = class MiscreatedServers {
         this.client = client;
     }
 
+
+    /**
+     * returns the total number of managed servers (optionaly returns only servers registered for a specified guild)
+     * @param {string} guild guildId of guild to fetch serverCount for . or all guilds
+     */
+    getServerCount(guild) {
+        return new Promise(async (fulfill, reject) => {
+            try {
+
+                // try to fetch server count
+                fulfill(
+                    await this.client.db.ServerController.getServerCount(guild)
+                )
+            } catch (err) {
+                reject(err);
+            }
+        });
+    }
+
     /**
      * find a specific server by guildId and server Object
      * @param {string} guild guildId of guild to fetch a server for

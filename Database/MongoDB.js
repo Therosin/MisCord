@@ -31,7 +31,7 @@ module.exports = class MongoDatabase {
             this.client.logger.info("[DATABASE] Connection to Database Succeded [MongoDB Connect]")
             this.client.logger.info("Set Client Provider as MongoDB")
             this.client.setProvider(
-                new MongoDBProvider(connection.getClient(), 'MisCordDev')
+                new MongoDBProvider(connection.getClient(), 'MisCord')
             ).catch(client.logger.error);
             this.GuildController = new GuildController(client)
             this.ServerController = new ServerController(client)
