@@ -5,6 +5,14 @@ const moment = require('moment');
 
 module.exports = class BotUtils {
 
+	static getAllGuildsCount = async (client) => {
+		// get guild collection size from all the shards
+		const req = await client.shard.fetchClientValues('guilds.cache.size');
+	
+		// return the added value
+		return req.reduce((p, n) => p + n, 0);
+	}
+
 	static randomInt(low, high) {
 		// eslint-disable-next-line no-mixed-operators
 		return Math.floor(Math.random() * (high - low + 1) + low);
@@ -32,6 +40,16 @@ module.exports = class BotUtils {
 
 		return back;
 	}
+
+	static StringPadding(pad, str, padLeft) {
+		if (typeof str === 'undefined') 
+		  return pad;
+		if (padLeft) {
+		  return (pad + str).slice(-pad.length);
+		} else {
+		  return (str + pad).substring(0, pad.length);
+		}
+	  }
 
 	static generateSuccessEmbed(message, title, description) {
 		return this.generateEmbed(message, title, description).setColor(0x8ed938);
