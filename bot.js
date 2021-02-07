@@ -9,6 +9,7 @@ const db = connection
 // General
 const path = require('path');
 const oneLine = require('common-tags').oneLine;
+const Utils = require('./util/BotUtils')
 
 // APIServ
 const express = require('express')
@@ -47,12 +48,20 @@ client
 		client.logger.info(`[READY] Logged in as ${client.user.tag}! ID: ${client.user.id}`);
 		client.setInterval(() => {
 			client.MiscreatedServers.getServerCount().then((serverCount) => {
-				client.user.setActivity(`over ${serverCount} Servers`, { type: 'WATCHING' })
+				Utils.getAllGuildsCount(client).then((guildCount) => {
+					client.user.setPresence({
+						status: 'idle',
+						activity: {
+							name: `Miscreated ${client.commandPrefix}help |S:${serverCount}/G:${guildCount}`,
+							type: `PLAYING`,
+						}
+					}).catch((err) => { client.logger.error(err) })
+				})
 			}).catch((err) => {
 				client.logger.error(err)
 			})
 		}, 60000);
-		
+
 	})
 	// Bot Got Disconnected from Discord
 	.on('disconnect', event => {
