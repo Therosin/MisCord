@@ -6,7 +6,7 @@
 
 "use strict";
 
-//const axios = require(axios)
+
 const misrcon = require("node-misrcon")
 module.exports = class MiscreatedInterop {
     /**
