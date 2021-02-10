@@ -1,4 +1,3 @@
-const { Collection } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const Utils = require("../../util/BotUtils")
 

@@ -53,7 +53,7 @@ module.exports = class MisShowWhitelistCommand extends Command {
                         try {
                             let server = new Interop(result.server_ip, result.server_rconport, result.server_password)
                             // ensure we have a valid server object.
-                            if (!server) { reject(`failed to create misrcon interface for server: ${serverId}`) }
+                            if (!server.server) { reject(`failed to create misrcon interface for server: ${serverId}`) }
 
                             fulfill(await server.getWhitelist())
                         } catch (err) {

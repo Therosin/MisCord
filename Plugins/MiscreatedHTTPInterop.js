@@ -32,7 +32,7 @@ module.exports = class MiscreatedInterop {
             if (tryAuth) { params = { "authkey": this.apiKey} }
         }
         let paramJSON = JSON.stringify(params);
-        if (paramJSON !== null) {
+        if (paramJSON != null) {
             param_payload = "?" + Util.hexEncode(paramJSON)
         }
 
