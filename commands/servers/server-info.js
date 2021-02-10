@@ -105,7 +105,7 @@ module.exports = class MisServerInfoCommand extends Command {
         })
             .then(async result => {
                 try {
-                    const server_1 = await new Promise(async (fulfill, reject) => {
+                    const server_status = await new Promise(async (fulfill, reject) => {
                         if (result && result.server_id) {
                             try {
                                 let server = new Interop(result.server_ip, result.server_rconport, result.server_password);
@@ -122,27 +122,27 @@ module.exports = class MisServerInfoCommand extends Command {
                         }
 
                     });
-                    if (server_1.name != undefined) {
+                    if (server_status && server_status.name != undefined) {
                         //debugging
-                        if (this.client.isDebugBuild) { console.log(server_1 || "no server data"); };
+                        if (this.client.isDebugBuild) { console.log(server_status || "no server data"); };
                         let message_text = `
-    __ServerName__: ${server_1.name}
-    > [ **ip**: ${server_1.ip} **version**: ${server_1.version} ]
+    __ServerName__: ${server_status.name}
+    > [ **ip**: ${server_status.ip} **version**: ${server_status.version} ]
 
-    __Server Time__:                  [ingame:${server_1.time}]
-    > **UpTime**: ${server_1.upTime} **Restarting**: ${server_1.nextRestart}
+    __Server Time__:                  [ingame:${server_status.time}]
+    > **UpTime**: ${server_status.upTime} **Restarting**: ${server_status.nextRestart}
 
     __Map__:
-    > **Current Map**: ${server_1.level}    **gameRules** : ${server_1.gameRules}
+    > **Current Map**: ${server_status.level}    **gameRules** : ${server_status.gameRules}
 
     __Weather__
-    > **Current**: ${server_1.weather} [weatherPattern: ${server_1.weatherPattern}]
+    > **Current**: ${server_status.weather} [weatherPattern: ${server_status.weatherPattern}]
 
     __Direct Connect__
     steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
 
-    __Players__:                      [online:${server_1.players}]`;
-                        return genPlayerList(server_1, message_text, this.client.SteamWebApi).then(message_text_1 => {
+    __Players__:                      [online:${server_status.players}]`;
+                        return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {
 
                             let embed = Utils.generateSuccessEmbed(message_text_1, "Success fetching Server Info");
                             message.say(embed);
