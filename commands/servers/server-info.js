@@ -124,7 +124,7 @@ module.exports = class MisServerInfoCommand extends Command {
                     });
                     if (server_status && server_status.name != undefined) {
                         //debugging
-                        if (this.client.isDebugBuild) { console.log(server_status || "no server data"); };
+                        if (this.client.isDebugBuild) { console.log(server_status); };
                         let message_text = `
     __ServerName__: ${server_status.name}
     > [ **ip**: ${server_status.ip} **version**: ${server_status.version} ]
