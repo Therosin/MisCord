@@ -93,7 +93,8 @@ module.exports = class MisServerInfoCommand extends Command {
                             //debugging
                             if (this.client.isDebugBuild) { console.log(server||"no server data") };
                             let message_text = `
-__ServerName__: ${server.name} [ ip: ${server.ip} version: ${server.version} ]
+__ServerName__: ${server.name}
+> [ **ip**: ${server.ip} **version**: ${server.version} ]
 
 __Server Time__:                  [ingame:${server.time}]
 > **UpTime**: ${server.upTime} **Restarting**: ${server.nextRestart}
