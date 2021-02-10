@@ -21,6 +21,10 @@ module.exports = class MisServerRestartCommand extends Command {
                     key: 'serverId',
                     prompt: 'enter the serverId to send a message',
                     type: 'string',
+                    validate: serverId => {
+                        if (serverId.length != 6 ) return 'invalid serverId';
+                        return true
+                    }
                 },
                 {
                     key: 'messageContent',

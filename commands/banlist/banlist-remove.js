@@ -21,6 +21,10 @@ module.exports = class MisRemoveBanlistCommand extends Command {
                     key: 'serverId',
                     prompt: 'enter the serverId to manage banlist for',
                     type: 'string',
+                    validate: serverId => {
+                        if (serverId.length != 6 ) return 'invalid serverId';
+                        return true
+                    }
                 },
                 {
                     key: 'steamId',
@@ -32,6 +36,7 @@ module.exports = class MisRemoveBanlistCommand extends Command {
     }
 
     async run(message, args) {
+        message.delete();
         let serverId = args.serverId
         let steamId = args.steamId
         if (!serverId) { return message.say("You must specify a serverId to manage banlist for.") }

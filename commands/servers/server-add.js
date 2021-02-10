@@ -1,3 +1,4 @@
+const { Collection } = require('discord.js');
 const { Command } = require('discord.js-commando');
 const Utils = require("../../util/BotUtils")
 
@@ -8,7 +9,7 @@ module.exports = class MisAddServerCommand extends Command {
 			group: 'servers',
 			memberName: 'server-add',
 			description: 'configures miscreated server connections and authorisation',
-			examples: ['server-add', 'server-add localhost 64090 64094 rconpass1 c3cecio3ceciojci2o3cceoij'],
+			examples: ['server-add', 'server-add localhost 64090 64094 rconpass1 c3cecio3ceciojci2o3cceoij <- you must use this format if you want the messege to be autodeleted from chat'],
 			guildOnly: true,
 			userPermissions: ['ADMINISTRATOR'],
 			args: [
@@ -41,7 +42,6 @@ module.exports = class MisAddServerCommand extends Command {
 					key: 'authkey',
 					prompt: 'please enter the servers authkey, eg:we1162e243ekose5o',
 					type: 'string',
-					required: true
 				},
 			],
 		});
@@ -51,7 +51,6 @@ module.exports = class MisAddServerCommand extends Command {
 		/**
 		 * Create a temporary `server` object for the entered parameters all are require
 		 */
-
 		let server = {
 			"name": args.name,
 			"ip": args.ip,
@@ -65,7 +64,6 @@ module.exports = class MisAddServerCommand extends Command {
 			await this.client.MiscreatedServers.addServer(message.guild.id, server)
 				.then(result => { fulfill(result) })
 				.catch(err => { reject(err) })
-
 		}).then(result => {
 			//! Server Created
 			let embed = Utils.generateSuccessEmbed(`Server added, ID: ${result}`, "Create Server, OK!!")
@@ -74,6 +72,10 @@ module.exports = class MisAddServerCommand extends Command {
 			//! Failed to Create server
 			let embed = Utils.generateFailEmbed(`Failed to add Server: ${err}`, "Create Server Failed!")
 			message.say(embed)
+		}).finally(() => {
+			setTimeout(() => {
+				message.delete()
+			}, 500);
 		})
 	}
 }

@@ -46,12 +46,17 @@ module.exports = class MisServerInfoCommand extends Command {
                     key: 'serverId',
                     prompt: 'enter the serverId to get info for',
                     type: 'string',
+                    validate: serverId => {
+                        if (serverId.length != 6 ) return 'invalid serverId';
+                        return true
+                    }
                 },
             ]
         });
     }
 
     async run(message, args) {
+        message.delete();
         let serverId = args.serverId
         if (!serverId) { return message.say("You must specify a serverId to get info for.") }
 
@@ -106,7 +111,7 @@ __Weather__
 > **Current**: ${server.weather} [weatherPattern: ${server.weatherPattern}]
 
 __Direct Connect__
-> [Join Server](steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport})
+  steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
 
 __Players__:                      [online:${server.players}]`
                             return genPlayerList(server, message_text,this.client.SteamWebApi).then(message_text => {

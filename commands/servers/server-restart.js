@@ -23,15 +23,21 @@ module.exports = class MisServerRestartCommand extends Command {
                     key: 'serverId',
                     prompt: 'enter the serverId to restart',
                     type: 'string',
+                    validate: serverId => {
+                        if (serverId.length != 6 ) return 'invalid serverId';
+                        return true
+                    }
                 },
                 {
                     key: 'restartTime',
                     prompt: 'how long untill restart (minutes: defaults to 1)',
-                    type: 'string',
+                    default: "1",
+                    type: 'string'
                 },
                 {
                     key: 'restartMessage',
                     prompt: 'enter a Message to Announce or nothing to Skip - server will still send the usual announcements, use this to give players a reason.',
+                    default: "",
                     type: 'string',
                 }
             ]
@@ -39,6 +45,7 @@ module.exports = class MisServerRestartCommand extends Command {
     }
 
     async run(message, args) {
+        message.delete();
         let serverId = args.serverId
         let restartTime = args.restartTime
         let restartMessage = args.restartMessage

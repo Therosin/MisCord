@@ -17,6 +17,7 @@ module.exports = class MisServerListCommand extends Command {
     }
 
     async run(message) {
+        message.delete();
 
         return new Promise(async (fulfill, reject) => {
             try {

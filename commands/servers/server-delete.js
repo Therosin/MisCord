@@ -18,12 +18,17 @@ module.exports = class MisDeleteServerCommand extends Command {
                     key: 'serverId',
                     prompt: 'enter the serverId to delete',
                     type: 'string',
+                    validate: serverId => {
+                        if (serverId.length != 6 ) return 'invalid serverId';
+                        return true
+                    }
                 },
             ]
         });
     }
 
     async run(message, args) {
+        message.delete();
         let serverId = args.serverId
         if (!serverId) { return message.say("serverId is required!") }
 
