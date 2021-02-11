@@ -24,7 +24,7 @@ module.exports = class MisServerRestartCommand extends Command {
                     prompt: 'enter the serverId to restart',
                     type: 'string',
                     validate: serverId => {
-                        if (serverId.length != 6 ) return 'invalid serverId';
+                        if (serverId.length != 6) return 'invalid serverId';
                         return true
                     }
                 },
@@ -63,41 +63,37 @@ module.exports = class MisServerRestartCommand extends Command {
                 reject(err)
             }
         })
-            .then(result => {
+            .then(async result => {
 
                 //! Server with id `serverId` found
-                return new Promise(async (fulfill, reject) => {
-                    if (result && result.server_id) {
-                        try {
-                            let server = new Interop(result.server_ip, result.server_rconport, result.server_password)
-                            // ensure we have a valid server object.
-                            if (!server) { reject(`failed to create misrcon interface for server: ${serverId}`) }
+                try {
+                    const Interop_Result = await new Promise(async (fulfill, reject) => {
+                        if (result && result.server_id) {
+                            try {
+                                let server = new Interop(result.server_ip, result.server_rconport, result.server_password);
+                                // ensure we have a valid server object.
+                                if (!server.server) { reject(`failed to create misrcon interface for server: ${serverId}`); }
 
-                            fulfill(await server.restartServer(restartTime,restartMessage))
-                        } catch (err) {
-                            reject(err)
+                                fulfill(await server.restartServer(restartTime, restartMessage));
+                            } catch (err) {
+                                reject(err);
+                            }
+                        } else {
+                            if (this.client.isDebugBuild) { console.log(result); };
+                            reject(`Invalid ServerData Please remove and Re add server: ${serverId} \n _this shouldnt happen if you keep seeing this message please report it as a bug_`);
                         }
-                    } else {
-                        if (this.client.isDebugBuild) { console.log(result) };
-                        reject(`Invalid ServerData Please remove and Re add server: ${serverId} \n _this shouldnt happen if you keep seeing this message please report it as a bug_`)
+
+                    });
+                    if (Interop_Result) {
+                        //debugging
+                        if (this.client.isDebugBuild) { console.log(Interop_Result); };
+                        let embed = Utils.generateSuccessEmbed(Interop_Result, "restart requested!");
+                        message.say(embed);
                     }
-
-                })
-                    //* Restart Requested
-                    .then(result => {
-                        if (result) {
-                            //debugging
-                            if (this.client.isDebugBuild) { console.log(result) };
-                            let embed = Utils.generateSuccessEmbed(result,"restart requested!")
-                            message.say(embed)
-                        }
-
-                    })
-                    //! Couldnt fetch Server Info
-                    .catch(err => {
-                        let embed = Utils.generateFailEmbed(`${err}`, "Error in Restart Request!")
-                        message.say(embed)
-                    })
+                } catch (restart_error) {
+                    let fail_embed = Utils.generateFailEmbed(`${restart_error}`, "Error in Restart Request!");
+                    message.say(fail_embed);
+                }
 
             })
             .catch(err => {

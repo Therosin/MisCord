@@ -52,41 +52,37 @@ module.exports = class MisServerRestartCommand extends Command {
                 reject(err)
             }
         })
-            .then(result => {
+            .then(async result => {
 
                 //! Server with id `serverId` found
-                return new Promise(async (fulfill, reject) => {
-                    if (result && result.server_id) {
-                        try {
-                            let server = new Interop(result.server_ip, result.server_rconport, result.server_password)
-                            // ensure we have a valid server object.
-                            if (!server) { reject(`failed to create misrcon interface for server: ${serverId}`) }
+                try {
+                    const result_1 = await new Promise(async (fulfill, reject) => {
+                        if (result && result.server_id) {
+                            try {
+                                let server = new Interop(result.server_ip, result.server_rconport, result.server_password);
+                                // ensure we have a valid server object.
+                                if (!server.server) { reject(`failed to create misrcon interface for server: ${serverId}`); }
 
-                            fulfill(await server.sendMessage(messageContent))
-                        } catch (err) {
-                            reject(err)
+                                fulfill(await server.sendMessage(messageContent));
+                            } catch (err) {
+                                reject(err);
+                            }
+                        } else {
+                            if (this.client.isDebugBuild) { console.log(result); };
+                            reject(`Invalid ServerData Please remove and Re add server: ${serverId} \n _this shouldnt happen if you keep seeing this message please report it as a bug_`);
                         }
-                    } else {
-                        if (this.client.isDebugBuild) { console.log(result) };
-                        reject(`Invalid ServerData Please remove and Re add server: ${serverId} \n _this shouldnt happen if you keep seeing this message please report it as a bug_`)
+
+                    });
+                    if (result_1) {
+                        //debugging
+                        if (this.client.isDebugBuild) { console.log(result_1); };
+                        let embed = Utils.generateSuccessEmbed(result_1, "message sent!");
+                        message.say(embed);
                     }
-
-                })
-                    //* Message Sent
-                    .then(result => {
-                        if (result) {
-                            //debugging
-                            if (this.client.isDebugBuild) { console.log(result) };
-                            let embed = Utils.generateSuccessEmbed(result,"message sent!")
-                            message.say(embed)
-                        }
-
-                    })
-                    //! Couldnt fetch Server Info
-                    .catch(err => {
-                        let embed = Utils.generateFailEmbed(`${err}`, "Error in sendMessage!")
-                        message.say(embed)
-                    })
+                } catch (err_1) {
+                    let embed_1 = Utils.generateFailEmbed(`${err_1}`, "Error in sendMessage!");
+                    message.say(embed_1);
+                }
 
             })
             .catch(err => {

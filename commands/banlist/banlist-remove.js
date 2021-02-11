@@ -2,7 +2,6 @@ const { Command } = require('discord.js-commando');
 
 const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop");
-const { Message } = require('discord.js');
 
 module.exports = class MisRemoveBanlistCommand extends Command {
     constructor(client) {
@@ -61,7 +60,7 @@ module.exports = class MisRemoveBanlistCommand extends Command {
                         try {
                             let server = new Interop(result.server_ip, result.server_rconport, result.server_password)
                             // ensure we have a valid server object.
-                            if (!server) { reject(`failed to create misrcon interface for server: ${serverId}`) }
+                            if (!server.server) { reject(`failed to create misrcon interface for server: ${serverId}`) }
 
                             fulfill(await server.unbanPlayer(steamId))
                         } catch (err) {

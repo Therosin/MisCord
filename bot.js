@@ -11,11 +11,7 @@ const path = require('path');
 const oneLine = require('common-tags').oneLine;
 const Utils = require('./util/BotUtils')
 
-// APIServ
-const express = require('express')
-const mds = require('markdown-serve');
-const app = express();
-const port = 8080;
+
 
 require('dotenv').config()
 let config = {
@@ -138,14 +134,3 @@ client.registry
 client.login(config.token).catch(err => {
 	client.logger.error(err);
 });
-
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
-app.use(
-	mds.middleware({
-		rootDirectory: path.resolve(__dirname, 'Public'),
-		view: 'markdown'
-	})
-);
-app.listen(port, () => client.logger.info(`Example app listening on port ${port}!`));

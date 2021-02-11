@@ -1,7 +1,5 @@
 /* eslint-disable new-cap */
 const { MessageEmbed } = require('discord.js');
-const { stripIndents } = require('common-tags');
-const moment = require('moment');
 
 module.exports = class BotUtils {
 

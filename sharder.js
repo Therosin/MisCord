@@ -2,9 +2,9 @@
 const path = require('path');
 const { ShardingManager } = require('discord.js');
 
-const { TIMEOUT } = require('dns');
-
 require('dotenv').config()
+
+require('./apiserver')
 
 /* eslint-disable no-console */
 
