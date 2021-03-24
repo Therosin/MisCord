@@ -6,6 +6,8 @@ const app = express();
 const port = 8080;
 
 
+const apigateway = require('./API/apigateway')
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
@@ -15,5 +17,7 @@ app.use(
 		view: 'markdown'
 	})
 );
+
+app.use('/api', apigateway)
 
 app.listen(port, () => console.info(`apiServer listening on port ${port}!`));
