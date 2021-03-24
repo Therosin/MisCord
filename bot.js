@@ -118,8 +118,6 @@ client.on('message', async message => {
 	if (!message.guild) {
 		return;
 	}
-	// Levels not in use
-	//await client.levels.giveGuildUserExp(message.guild.members.get(message.author.id), message);
 });
 
 client.registry
