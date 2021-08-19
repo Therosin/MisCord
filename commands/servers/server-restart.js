@@ -3,6 +3,9 @@ const { Command } = require('discord.js-commando');
 const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop");
 
+
+const CommandAllowRoles = ["Miscord-User", "miscord-user"]
+
 module.exports = class MisServerRestartCommand extends Command {
     constructor(client) {
         super(client, {
@@ -17,7 +20,6 @@ module.exports = class MisServerRestartCommand extends Command {
                 `${client.commandPrefix} server-restart e32dfw2 5 "restarting in 5 minutes due to mod updates"`,
             ],
             guildOnly: true,
-            userPermissions: ['ADMINISTRATOR'],
             args: [
                 {
                     key: 'serverId',
@@ -43,6 +45,19 @@ module.exports = class MisServerRestartCommand extends Command {
             ]
         });
     }
+
+    hasPermission(msg) {
+        if (this.client.isOwner(msg.author)) {
+            return true
+        };
+
+        if (msg.member.roles.cache.some(r => CommandAllowRoles.includes(r.name))) {
+            return true
+        } else {
+            return "You do not Have Permission to Use this Command"
+        }
+    }
+
 
     async run(message, args) {
         message.delete();

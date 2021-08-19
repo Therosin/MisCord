@@ -4,6 +4,9 @@ const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop")
 
 
+
+const CommandAllowRoles = ["Miscord-User", "miscord-user"]
+
 /**
  * Check we have a Valid array of players
  * @param {array} playersArray 
@@ -71,7 +74,6 @@ module.exports = class MisServerInfoCommand extends Command {
                 `${client.commandPrefix} server-info e32dfw2`,
             ],
             guildOnly: true,
-            userPermissions: ['ADMINISTRATOR'],
             args: [
                 {
                     key: 'serverId',
@@ -84,6 +86,18 @@ module.exports = class MisServerInfoCommand extends Command {
                 },
             ]
         });
+    }
+
+    hasPermission(msg) {
+        if (this.client.isOwner(msg.author)) {
+            return true
+        };
+
+        if (msg.member.roles.cache.some(r => CommandAllowRoles.includes(r.name))) {
+            return true
+        } else {
+            return "You do not Have Permission to Use this Command"
+        }
     }
 
     async run(message, args) {

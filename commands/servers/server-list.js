@@ -1,6 +1,10 @@
 const { Command } = require('discord.js-commando');
 const Utils = require("../../util/BotUtils")
 
+
+const CommandAllowRoles = ["Miscord-User", "miscord-user"]
+
+
 module.exports = class MisServerListCommand extends Command {
     constructor(client) {
         super(client, {
@@ -11,9 +15,21 @@ module.exports = class MisServerListCommand extends Command {
             examples: [
                 `${client.commandPrefix} server-list`,
             ],
-            guildOnly: true,
-            userPermissions: ['ADMINISTRATOR'],
+            guildOnly: true
         });
+    }
+
+
+    hasPermission(msg) {
+        if (this.client.isOwner(msg.author)) {
+            return true
+        };
+
+        if (msg.member.roles.cache.some(r => CommandAllowRoles.includes(r.name))) {
+            return true
+        } else {
+            return "You do not Have Permission to Use this Command"
+        }
     }
 
     async run(message) {

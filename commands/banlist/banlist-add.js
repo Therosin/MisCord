@@ -3,6 +3,11 @@ const { Command } = require('discord.js-commando');
 const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop");
 
+
+
+const CommandAllowRoles = ["Miscord-User", "miscord-user"]
+
+
 module.exports = class MisAddBanlistCommand extends Command {
     constructor(client) {
         super(client, {
@@ -21,7 +26,7 @@ module.exports = class MisAddBanlistCommand extends Command {
                     prompt: 'enter the serverId to manage banlist for',
                     type: 'string',
                     validate: serverId => {
-                        if (serverId.length != 6 ) return 'invalid serverId';
+                        if (serverId.length != 6) return 'invalid serverId';
                         return true
                     }
                 },
@@ -32,6 +37,19 @@ module.exports = class MisAddBanlistCommand extends Command {
                 }
             ]
         });
+    }
+
+
+    hasPermission(msg) {
+        if (this.client.isOwner(msg.author)) {
+            return true
+        };
+
+        if (msg.member.roles.cache.some(r => CommandAllowRoles.includes(r.name))) {
+            return true
+        } else {
+            return "You do not Have Permission to Use this Command"
+        }
     }
 
     async run(message, args) {
@@ -77,7 +95,7 @@ module.exports = class MisAddBanlistCommand extends Command {
                         if (result) {
                             //debugging
                             if (this.client.isDebugBuild) { console.log(result) };
-                            let embed = Utils.generateSuccessEmbed(result,"add banlist success!")
+                            let embed = Utils.generateSuccessEmbed(result, "add banlist success!")
                             message.say(embed)
                         }
 

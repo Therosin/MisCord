@@ -1,6 +1,7 @@
 const { Command } = require('discord.js-commando');
 const Utils = require("../../util/BotUtils")
-const pQueue = require('../../util/pQueue')
+
+const CommandAllowRoles = ["Miscord-User", "miscord-user"]
 
 module.exports = class MisAddServerCommand extends Command {
 	constructor(client) {
@@ -11,7 +12,6 @@ module.exports = class MisAddServerCommand extends Command {
 			description: 'configures miscreated server connections and authorisation',
 			examples: ['server-add', 'server-add localhost 64090 64094 rconpass1 c3cecio3ceciojci2o3cceoij <- you must use this format if you want the messege to be autodeleted from chat'],
 			guildOnly: true,
-			userPermissions: ['ADMINISTRATOR'],
 			argsPromptLimit: 0,
 			args: [
 				{
@@ -55,31 +55,53 @@ module.exports = class MisAddServerCommand extends Command {
 		});
 	}
 
+
+	hasPermission(msg) {
+		if (this.client.isOwner(msg.author)) {
+			return true
+		};
+
+		if (msg.member.roles.cache.some(r => CommandAllowRoles.includes(r.name))) {
+			return true
+		} else {
+			return "You do not Have Permission to Use this Command"
+		}
+	}
+
+
 	async run(message, args) {
+
+
 		const client = this.client
+
 
 		/**
 		 * Create a temporary `server` object for the entered parameters all are require
 		 */
-
 		const Continue = (server) => {
 			const run = new Promise(async (fulfill, reject) => {
 				await client.MiscreatedServers.addServer(message.guild.id, server)
 					.then(result => { fulfill(result) })
 					.catch(err => { reject(err) })
-			}).then(result => {
-				//! Server Created
-				let embed = Utils.generateSuccessEmbed(`Server added, ID: ${result}`, "Create Server, OK!!")
-				message.say(embed)
-			}).catch(err => {
-				//! Failed to Create server
-				let embed = Utils.generateFailEmbed(`Failed to add Server: ${err}`, "Create Server Failed!")
-				message.say(embed)
-			}).finally(() => {
-				setTimeout(() => {
-					message.delete()
-				}, 500);
 			})
+
+				.then(result => {
+					//! Server Created
+					let embed = Utils.generateSuccessEmbed(`Server added, ID: ${result}`, "Create Server, OK!!")
+					message.say(embed)
+				})
+
+				.catch(err => {
+					//! Failed to Create server
+					let embed = Utils.generateFailEmbed(`Failed to add Server: ${err}`, "Create Server Failed!")
+					message.say(embed)
+				})
+
+				.finally(() => {
+					setTimeout(() => {
+						message.delete()
+					}, 500);
+				})
 			return run
 		}
 

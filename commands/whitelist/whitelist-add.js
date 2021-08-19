@@ -3,6 +3,10 @@ const { Command } = require('discord.js-commando');
 const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop");
 
+
+const CommandAllowRoles = ["Miscord-User", "miscord-user"]
+
+
 module.exports = class MisAddWhitelistCommand extends Command {
     constructor(client) {
         super(client, {
@@ -14,14 +18,13 @@ module.exports = class MisAddWhitelistCommand extends Command {
                 `${client.commandPrefix} whitelist-add e32dfw2 710232182323`,
             ],
             guildOnly: true,
-            userPermissions: ['ADMINISTRATOR'],
             args: [
                 {
                     key: 'serverId',
                     prompt: 'enter the serverId to manage whitelisting for',
                     type: 'string',
                     validate: serverId => {
-                        if (serverId.length != 6 ) return 'invalid serverId';
+                        if (serverId.length != 6) return 'invalid serverId';
                         return true
                     }
                 },
@@ -32,6 +35,19 @@ module.exports = class MisAddWhitelistCommand extends Command {
                 }
             ]
         });
+    }
+
+
+    hasPermission(msg) {
+        if (this.client.isOwner(msg.author)) {
+            return true
+        };
+
+        if (msg.member.roles.cache.some(r => CommandAllowRoles.includes(r.name))) {
+            return true
+        } else {
+            return "You do not Have Permission to Use this Command"
+        }
     }
 
     async run(message, args) {
@@ -77,7 +93,7 @@ module.exports = class MisAddWhitelistCommand extends Command {
                         if (result) {
                             //debugging
                             if (this.client.isDebugBuild) { console.log(result) };
-                            let embed = Utils.generateSuccessEmbed(result,"add whitelist success!")
+                            let embed = Utils.generateSuccessEmbed(result, "add whitelist success!")
                             message.say(embed)
                         }
 

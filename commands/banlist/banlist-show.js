@@ -2,6 +2,9 @@ const { Command } = require('discord.js-commando');
 const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop")
 
+const CommandAllowRoles = ["Miscord-User", "miscord-user"]
+
+
 module.exports = class MisShowBanlistCommand extends Command {
     constructor(client) {
         super(client, {
@@ -13,19 +16,31 @@ module.exports = class MisShowBanlistCommand extends Command {
                 `${client.commandPrefix} banlist-show e32dfw2`,
             ],
             guildOnly: true,
-            userPermissions: ['ADMINISTRATOR'],
             args: [
                 {
                     key: 'serverId',
                     prompt: 'enter the serverId to show the banlist for',
                     type: 'string',
                     validate: serverId => {
-                        if (serverId.length != 6 ) return 'invalid serverId';
+                        if (serverId.length != 6) return 'invalid serverId';
                         return true
                     }
                 },
             ]
         });
+    }
+
+
+    hasPermission(msg) {
+        if (this.client.isOwner(msg.author)) {
+            return true
+        };
+
+        if (msg.member.roles.cache.some(r => CommandAllowRoles.includes(r.name))) {
+            return true
+        } else {
+            return "You do not Have Permission to Use this Command"
+        }
     }
 
     async run(message, args) {
