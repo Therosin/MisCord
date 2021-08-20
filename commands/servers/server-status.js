@@ -120,18 +120,20 @@ module.exports = class MisServerInfoCommand extends Command {
                         if (this.client.isDebugBuild) { console.log(server_status); };
                         let message_text = `
 
-                        > **${server_status.name}**
+                        > <:server:827461152904314911>  **${server_status.name}**
 
-                        :clock~1:  **Time :** ${server_status.time}
-                        :clock~1:  **Restarting in :** ${server_status.nextRestart}
+                        <:weather_cloudy:827460827439169587>  **Weather :** ${server_status.weather}
 
-                        :weather_cloudy:  **Weather :** ${server_status.weather}
+                        <:clock~1:827461114064928798>  **Ingame Time :** ${server_status.time}
 
-                        :antenna:  **Players online :** ${server_status.players}
+                        <:warning~1:827460865941831690>  **Restarting in :** ${server_status.nextRestart}
 
-                        :mouse~1:  **Direct Connect :**
+                        <:antenna:827461128971747348>  **Players online :** ${server_status.players}
+
+                        <:mouse~1:827461167026405386>  **Direct Connect :**
                         > steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
-                        
+
+                        <:svaltek:827467970707062834>
                         `;
                         return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {
 

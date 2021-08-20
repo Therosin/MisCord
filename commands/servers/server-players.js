@@ -139,9 +139,9 @@ module.exports = class MisServerInfoCommand extends Command {
                         if (this.client.isDebugBuild) { console.log(server_status); };
                         let message_text = `
 
-    :server:  __ServerName__ : ${server_status.name}
+                        <:server:827461152904314911>  __ServerName__ : ${server_status.name}
 
-    :antenna:  __Players__  : [online : ${server_status.players}]
+                        <:antenna:827461128971747348>  __Players__  : [online : ${server_status.players}]
     
     `;
                         return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {
