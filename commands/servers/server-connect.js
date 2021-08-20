@@ -122,7 +122,7 @@ module.exports = class MisServerInfoCommand extends Command {
 
                         > <:server:827461152904314911>  **${server_status.name}**
 
-                        <:mouse~1:827461167026405386>  **Direct Connect :**
+                        <:mouseMC:827461167026405386>  **Direct Connect :**
                         steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
                         
                         <:svaltek:827467970707062834>

@@ -124,13 +124,13 @@ module.exports = class MisServerInfoCommand extends Command {
 
                         <:weather_cloudy:827460827439169587>  **Weather :** ${server_status.weather}
 
-                        <:clock~1:827461114064928798>  **Ingame Time :** ${server_status.time}
+                        <:clockMC:827461114064928798>  **Ingame Time :** ${server_status.time}
 
-                        <:warning~1:827460865941831690>  **Restarting in :** ${server_status.nextRestart}
+                        <:warningMC:827460865941831690>  **Restarting in :** ${server_status.nextRestart}
 
                         <:antenna:827461128971747348>  **Players online :** ${server_status.players}
 
-                        <:mouse~1:827461167026405386>  **Direct Connect :**
+                        <:mouseMC:827461167026405386>  **Direct Connect :**
                         > steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
 
                         <:svaltek:827467970707062834>
