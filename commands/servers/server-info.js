@@ -125,7 +125,7 @@ module.exports = class MisServerInfoCommand extends Command {
                         if (this.client.isDebugBuild) { console.log(server_status); };
                         let message_text = `
 
-    > <:server:827461152904314911>  __ServerName__ ${server_status.name}
+    <:server:827461152904314911>  __ServerName__ ${server_status.name}
     > [ **ip**: ${server_status.ip} **version**: ${server_status.version} ]
 
     <:clockMC:827461114064928798>  __Server Time__ [ingame:${server_status.time}]
