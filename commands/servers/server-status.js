@@ -8,6 +8,18 @@ const Interop = require("../../Plugins/MiscreatedInterop")
 const CommandAllowRoles = ["Miscord-User", "miscord-user"]
 */
 
+/**
+ * Check we have a Valid array of players
+ * @param {array} playersArray 
+ */
+function validPlayerArray(playersArray) {
+    if (playersArray != undefined) {
+        //TODO: We should realy check we actualy have players, not just that we jave a valid array
+        return (playersArray && Array.isArray(playersArray))
+    }
+    return false
+}
+
 const genPlayerEntries = async (message_text) => {
     return message_text
 };
