@@ -4,74 +4,19 @@ const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop")
 
 
-
+/** COMMAND AVAILABLE FOR ANYONE --  Pitiviers 08/20/21
 const CommandAllowRoles = ["Miscord-User", "miscord-user"]
-
-/**
- * Check we have a Valid array of players
- * @param {array} playersArray 
- */
-function validPlayerArray(playersArray) {
-    if (playersArray != undefined) {
-        //TODO: We should realy check we actualy have players, not just that we jave a valid array
-        return (playersArray && Array.isArray(playersArray))
-    }
-    return false
-}
-
-/**
- * Generate a player list Embed
- * @param {Object} server Current server Object
- * @param {string} message_text template message string
- * @param {Object} SteamWebApi reference to client steamwebapi object
- */
-
-const genPlayerEntries = async (server, message_text, SteamWebApi) => {
-    for (const player of server.playersArray) {
-        let playerDetail = `\n > **Name**: ${player.name}    **SteamID**: ${player.steam}[ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping} **entity**: ${player.entID}`;
-        await SteamWebApi.getSteamProfile(player.steam).then(profile => {
-            if (profile) {
-                let communityVisability = "Unknown";
-                if (profile.visibilityState) {
-                    if (profile.visibilityState === 1) { communityVisability = "Private"; }
-                    if (profile.visibilityState === 2) { communityVisability = "FriendsOnly"; }
-                    if (profile.visibilityState === 3) { communityVisability = "Public"; }
-                }
-                playerDetail += `\n >    **SteamName**: [${profile.nickname}](${profile.url}) | **SteamPrivacy**:${communityVisability}`;
-            }
-        });
-        message_text += playerDetail;
-    }
-    return message_text
-};
-
-const genPlayerList = (server, message_text, SteamWebApi) => {
-    return new Promise(async (fulfill, reject) => {
-        if (!server || !message_text) {
-            // server and message_text are required
-            reject("Inavalid params")
-        } else {
-            // Check we have valid players
-            if (validPlayerArray(server.playersArray)) {
-                await genPlayerEntries(server, message_text, SteamWebApi)
-                    .then(message_text => { fulfill(message_text) })
-                    .catch(err => { reject(err) });
-            }
-        }
-    })
-};
-
-
+*/
 
 module.exports = class MisServerInfoCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'server-info',
+            name: 'server-status',
             group: 'servers',
-            memberName: 'server-info',
-            description: 'get server-status for the specified serverId',
+            memberName: 'server-status',
+            description: 'get lightened server status for the specified serverId - for public use',
             examples: [
-                `${client.commandPrefix} server-info e32dfw2`,
+                `${client.commandPrefix} server-status e32dfw2`,
             ],
             guildOnly: true,
             args: [
@@ -88,6 +33,7 @@ module.exports = class MisServerInfoCommand extends Command {
         });
     }
 
+    /** COMMAND AVAILABLE FOR ANYONE --  Pitiviers 08/20/21
     hasPermission(msg) {
         if (this.client.isOwner(msg.author)) {
             return true
@@ -99,6 +45,7 @@ module.exports = class MisServerInfoCommand extends Command {
             return "You do not Have Permission to Use this Command"
         }
     }
+    */
 
     async run(message, args) {
         message.delete();
@@ -141,24 +88,19 @@ module.exports = class MisServerInfoCommand extends Command {
                         if (this.client.isDebugBuild) { console.log(server_status); };
                         let message_text = `
 
-    :server:  __ServerName__ ${server_status.name}
-    > [ **ip**: ${server_status.ip} **version**: ${server_status.version} ]
+                        :play:  **${server_status.name}**
 
-    :clock~1:  __Server Time__ [ingame:${server_status.time}]
-    > **UpTime**: ${server_status.upTime} **Restarting**: ${server_status.nextRestart}
+                        :clock~1:  **Time :** ${server_status.time}
+                        :clock~1:  **Restarting in :** ${server_status.nextRestart}
 
-    :map~1:  __Map__
-    > **Current Map**: ${server_status.level}    **gameRules** : ${server_status.gameRules}
+                        :weather_cloudy:  **Weather :** ${server_status.weather}
 
-    :weather_cloudy:  __Weather__
-    > **Current**: ${server_status.weather} [weatherPattern: ${server_status.weatherPattern}]
+                        :antenna:  **Players online :** ${server_status.players}
 
-    :mouse~1:  __Direct Connect__
-    steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
-
-    :antenna:  __Players__                      [online : ${server_status.players}]
-    
-    `;
+                        :mouse~1:  **Direct Connect :**
+                        > steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
+                        
+                        `;
                         return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {
 
                             let embed = Utils.generateSuccessEmbed(message_text_1, "Success fetching Server Info");
