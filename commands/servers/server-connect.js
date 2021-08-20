@@ -8,6 +8,25 @@ const Interop = require("../../Plugins/MiscreatedInterop")
 const CommandAllowRoles = ["Miscord-User", "miscord-user"]
 */
 
+const genPlayerEntries = async (message_text) => {
+    return message_text
+};
+
+const genPlayerList = (server, message_text, SteamWebApi) => {
+    return new Promise(async (fulfill, reject) => {
+        if (!server || !message_text) {
+            // server and message_text are required
+            reject("Invalid params")
+        } else {
+            // Check we have valid players
+            if (validPlayerArray(server.playersArray)) {
+                await genPlayerEntries(message_text)
+                    .then(message_text => { fulfill(message_text) })
+                    .catch(err => { reject(err) });
+            }
+        }
+    })
+};
 
 module.exports = class MisServerInfoCommand extends Command {
     constructor(client) {
@@ -89,10 +108,10 @@ module.exports = class MisServerInfoCommand extends Command {
                         if (this.client.isDebugBuild) { console.log(server_status); };
                         let message_text = `
 
-                        :play:  **${server_status.name}**
+                        >  **${server_status.name}**
 
                         :mouse~1:  **Direct Connect :**
-                        > steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
+                        steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
                         
                         `;
                         return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {

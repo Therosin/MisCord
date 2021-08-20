@@ -26,22 +26,7 @@ function validPlayerArray(playersArray) {
  * @param {Object} SteamWebApi reference to client steamwebapi object
  */
 
-const genPlayerEntries = async (server, message_text, SteamWebApi) => {
-    for (const player of server.playersArray) {
-        let playerDetail = `\n > **Name**: ${player.name}    **SteamID**: ${player.steam}[ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping} **entity**: ${player.entID}`;
-        await SteamWebApi.getSteamProfile(player.steam).then(profile => {
-            if (profile) {
-                let communityVisability = "Unknown";
-                if (profile.visibilityState) {
-                    if (profile.visibilityState === 1) { communityVisability = "Private"; }
-                    if (profile.visibilityState === 2) { communityVisability = "FriendsOnly"; }
-                    if (profile.visibilityState === 3) { communityVisability = "Public"; }
-                }
-                playerDetail += `\n >    **SteamName**: [${profile.nickname}](${profile.url}) | **SteamPrivacy**:${communityVisability}`;
-            }
-        });
-        message_text += playerDetail;
-    }
+const genPlayerEntries = async (message_text) => {
     return message_text
 };
 
@@ -49,18 +34,17 @@ const genPlayerList = (server, message_text, SteamWebApi) => {
     return new Promise(async (fulfill, reject) => {
         if (!server || !message_text) {
             // server and message_text are required
-            reject("Inavalid params")
+            reject("Invalid params")
         } else {
             // Check we have valid players
             if (validPlayerArray(server.playersArray)) {
-                await genPlayerEntries(server, message_text, SteamWebApi)
+                await genPlayerEntries(message_text)
                     .then(message_text => { fulfill(message_text) })
                     .catch(err => { reject(err) });
             }
         }
     })
 };
-
 
 
 module.exports = class MisServerInfoCommand extends Command {
