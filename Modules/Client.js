@@ -45,8 +45,6 @@ module.exports = class Miscord extends CommandoClient {
 		this.db = new MongoDatabase(this)
 		this.MiscreatedServers = new MiscreatedServers(this)
 		this.SteamWebApi = new SteamWebApi(this)
-		// Holds a reference to the main SvalTek Discord
-		this.supportGuild = this.guilds.cache.get('588187481971621888')
 	}
 
 	async ProcRestart() {
