@@ -64,7 +64,7 @@ module.exports = class pagedEmbed {
      * @param {Array}   data        data to paginate: must be an array of {name: "fieldname", value:"fieldcontent"}
      * @returns 
      */
-    sendPagedEmbed = (message, title, data) => {
+    sendPagedEmbed = async (message, title, data) => {
 
         const { channel } = message
 
