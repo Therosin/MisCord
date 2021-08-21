@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with MisCord.  If not, see <http://www.gnu.org/licenses/>.
 
-import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js'
+const { MessageActionRow, MessageButton, MessageEmbed } = require('discord.js')
 
 module.exports = class pagedEmbed {
 
