@@ -26,7 +26,22 @@ function validPlayerArray(playersArray) {
  * @param {Object} SteamWebApi reference to client steamwebapi object
  */
 
-const genPlayerEntries = async (message_text) => {
+const genPlayerEntries = async (server, message_text, SteamWebApi) => {
+    for (const player of server.playersArray) {
+        let playerDetail = `\n \n > **Name**: ${player.name}    **SteamID**: ${player.steam}[ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping}`;
+        await SteamWebApi.getSteamProfile(player.steam).then(profile => {
+            if (profile) {
+                let communityVisability = "Unknown";
+                if (profile.visibilityState) {
+                    if (profile.visibilityState === 1) { communityVisability = "Private"; }
+                    if (profile.visibilityState === 2) { communityVisability = "FriendsOnly"; }
+                    if (profile.visibilityState === 3) { communityVisability = "Public"; }
+                }
+                playerDetail += `**SteamName**: [${profile.nickname}](${profile.url}) | **Profile**:${communityVisability}`;
+            }
+        });
+        message_text += playerDetail;
+    }
     return message_text
 };
 
@@ -38,7 +53,7 @@ const genPlayerList = (server, message_text, SteamWebApi) => {
         } else {
             // Check we have valid players
             if (validPlayerArray(server.playersArray)) {
-                await genPlayerEntries(message_text)
+                await genPlayerEntries(server, message_text, SteamWebApi)
                     .then(message_text => { fulfill(message_text) })
                     .catch(err => { reject(err) });
             }
@@ -46,16 +61,15 @@ const genPlayerList = (server, message_text, SteamWebApi) => {
     })
 };
 
-
 module.exports = class MisServerInfoCommand extends Command {
     constructor(client) {
         super(client, {
-            name: 'server-info',
+            name: 'server-players',
             group: 'servers',
-            memberName: 'server-info',
-            description: 'get server-status for the specified serverId',
+            memberName: 'server-players',
+            description: 'get list of players currently on the server for the specified serverId',
             examples: [
-                `${client.commandPrefix} server-info e32dfw2`,
+                `${client.commandPrefix} server-players e32dfw2`,
             ],
             guildOnly: true,
             args: [
@@ -125,25 +139,10 @@ module.exports = class MisServerInfoCommand extends Command {
                         if (this.client.isDebugBuild) { console.log(server_status); };
                         let message_text = `
 \n
-<:server:827461152904314911>  __ServerName__ ${server_status.name}
-> [ **ip**: ${server_status.ip} **version**: ${server_status.version} ]
+<:server:827461152904314911>  __ServerName__ : ${server_status.name}
 
-<:clockMC:827461114064928798>  __Server Time__ [ingame:${server_status.time}]
-> **UpTime**: ${server_status.upTime} **Restarting**: ${server_status.nextRestart}
-
-<:mapMC:827461059505160204>  __Map__
-> **Current Map**: ${server_status.level}    **gameRules** : ${server_status.gameRules}
-
-<:weather_cloudy:827460827439169587>  __Weather__
-> **Current**: ${server_status.weather} [weatherPattern: ${server_status.weatherPattern}]
-
-<:mouseMC:827461167026405386>  __Direct Connect__
-steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
-
-<:antenna:827461128971747348>  __Players__                      [online : ${server_status.players}]
-> *Use : server-players <serverId> to get the list of online players*
-
-<:svaltek:827467970707062834>
+<:antenna:827461128971747348>  __Players__  : [online : ${server_status.players}]
+    
     `;
                         return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {
 

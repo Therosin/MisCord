@@ -50,7 +50,7 @@ module.exports = class MisServerListCommand extends Command {
                     // try to build a list out of the returned servers and send them back in a nice embed
                     let text = ""
                     data.forEach(server => {
-                        let line = `\n  [**Name**]: ${server.server_name} | [**id**]: ${server.server_id}\n [**hostname/ip**]: ${server.server_ip}\n [**gameport**]: ${server.server_gameport} | [**rconport**]: ${server.server_rconport}\n`
+                        let line = `\n \n <:server:827461152904314911> [**Name**]: ${server.server_name} | [**id**]: ${server.server_id}\n [**hostname/ip**]: ${server.server_ip}\n [**gameport**]: ${server.server_gameport} | [**rconport**]: ${server.server_rconport}`
                         text = text + line
                     });
 
