@@ -144,6 +144,7 @@ client.registry
 	.registerGroup('servers', 'Servers')
 	.registerGroup('whitelist', 'Whitelist')
 	.registerGroup('banlist', 'Banlist')
+	.registerGroup('util', 'Utils')
 	.registerDefaults()
 	.registerTypesIn(path.join(__dirname, 'types'))
 	.registerCommandsIn(path.join(__dirname, 'commands'));
