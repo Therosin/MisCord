@@ -124,25 +124,26 @@ module.exports = class MisServerInfoCommand extends Command {
                         //debugging
                         if (this.client.isDebugBuild) { console.log(server_status); };
                         let message_text = `
+\n
+<:server:827461152904314911>  __ServerName__ ${server_status.name}
+> [ **ip**: ${server_status.ip} **version**: ${server_status.version} ]
 
-    <:server:827461152904314911>  __ServerName__ ${server_status.name}
-    > [ **ip**: ${server_status.ip} **version**: ${server_status.version} ]
+<:clockMC:827461114064928798>  __Server Time__ [ingame:${server_status.time}]
+> **UpTime**: ${server_status.upTime} **Restarting**: ${server_status.nextRestart}
 
-    <:clockMC:827461114064928798>  __Server Time__ [ingame:${server_status.time}]
-    > **UpTime**: ${server_status.upTime} **Restarting**: ${server_status.nextRestart}
+<:mapMC:827461059505160204>  __Map__
+> **Current Map**: ${server_status.level}    **gameRules** : ${server_status.gameRules}
 
-    <:mapMC:827461059505160204>  __Map__
-    > **Current Map**: ${server_status.level}    **gameRules** : ${server_status.gameRules}
+<:weather_cloudy:827460827439169587>  __Weather__
+> **Current**: ${server_status.weather} [weatherPattern: ${server_status.weatherPattern}]
 
-    <:weather_cloudy:827460827439169587>  __Weather__
-    > **Current**: ${server_status.weather} [weatherPattern: ${server_status.weatherPattern}]
+<:mouseMC:827461167026405386>  __Direct Connect__
+steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
 
-    <:mouseMC:827461167026405386>  __Direct Connect__
-    steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
+<:antenna:827461128971747348>  __Players__                      [online : ${server_status.players}]
+> *Use : server-players <serverId> to get the list of online players*
 
-    <:antenna:827461128971747348>  __Players__                      [online : ${server_status.players}]
-
-    <:svaltek:827467970707062834>
+<:svaltek:827467970707062834>
     `;
                         return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {
 

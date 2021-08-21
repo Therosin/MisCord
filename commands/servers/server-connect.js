@@ -119,13 +119,13 @@ module.exports = class MisServerInfoCommand extends Command {
                         //debugging
                         if (this.client.isDebugBuild) { console.log(server_status); };
                         let message_text = `
+\n
+<:server:827461152904314911>  **${server_status.name}**
 
-                        <:server:827461152904314911>  **${server_status.name}**
+<:mouseMC:827461167026405386>  **Direct Connect :**
+steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
 
-                        <:mouseMC:827461167026405386>  **Direct Connect :**
-                        steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
-                        
-                        <:svaltek:827467970707062834>
+<:svaltek:827467970707062834>
                         `;
                         return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {
 
