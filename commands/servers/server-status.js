@@ -119,7 +119,8 @@ module.exports = class MisServerInfoCommand extends Command {
                         //debugging
                         if (this.client.isDebugBuild) { console.log(server_status); };
                         let message_text = `
-\n
+<:svaltek:827467970707062834>
+
 <:server:827461152904314911>  **${server_status.name}**
 
 <:weather_cloudy:827460827439169587>  **Weather :** ${server_status.weather}
