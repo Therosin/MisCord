@@ -68,9 +68,9 @@ module.exports = class UtilUpdateAndRestartCommand extends Command {
 
         //---- Allow anyone with developer role in SvalTek to UpdateAndRestart
 
-		const supportGuild = this.guilds.cache.get('588187481971621888')  // Holds a reference to the main SvalTek Discord
+		const supportGuild = this.client.guilds.cache.get('588187481971621888')  // Holds a reference to the main SvalTek Discord
         // try to find this member in supportGuild
-        const member = supportGuild.members.cache.get(message.author.id)
+        const member = supportGuild.members.cache.get(msg.author.id)
         // check this member is in Developer role
         const isDeveloper = member ? member.roles.cache.some(role => role.id === '588199855772663818') : false
         if (isDeveloper) {
