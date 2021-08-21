@@ -28,7 +28,7 @@ function validPlayerArray(playersArray) {
 
 const genPlayerEntries = async (server, message_text, SteamWebApi) => {
     for (const player of server.playersArray) {
-        let playerDetail = `\n \n > **Name**: ${player.name}    **SteamID**: ${player.steam}[ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping}`;
+        let playerDetail = `\n \n > **Name**: ${player.name} | **SteamID**: ${player.steam}[ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping} | `;
         await SteamWebApi.getSteamProfile(player.steam).then(profile => {
             if (profile) {
                 let communityVisability = "Unknown";
@@ -138,12 +138,11 @@ module.exports = class MisServerInfoCommand extends Command {
                         //debugging
                         if (this.client.isDebugBuild) { console.log(server_status); };
                         let message_text = `
-\n
-<:server:827461152904314911>  __ServerName__ : ${server_status.name}
+<:svaltek:827467970707062834>
 
-<:antenna:827461128971747348>  __Players__  : [online : ${server_status.players}]
-    
-    `;
+<:server:827461152904314911> **${server_status.name}**
+
+<:antenna:827461128971747348>  __Players online__  : ${server_status.players}`;
                         return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {
 
                             let embed = Utils.generateSuccessEmbed(message_text_1, "Success fetching Server Info");
