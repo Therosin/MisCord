@@ -49,6 +49,7 @@ module.exports = class UtilUpdateAndRestartCommand extends Command {
             args: [
                 {
                     key: 'commitPath',
+                    prompt: 'any params for update?',
                     type: 'string'
                 },
             ],
