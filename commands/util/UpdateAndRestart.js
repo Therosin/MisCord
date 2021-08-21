@@ -88,13 +88,13 @@ module.exports = class UtilUpdateAndRestartCommand extends Command {
         })
             .then(result => {
                 //! Success, Restart
-                let embed = Utils.generateSuccessEmbed(`Bot Update Ok!`, `${result}\n\n -- Restarting!}`)
+                let embed = Utils.generateSuccessEmbed(`Update Compleate... Restarting!\n\n> ${result}`, `Bot Update Ok!`)
                 message.say(embed)
                 return message.client.ProcRestart()
             })
             .catch(err => {
                 //! Error
-                let embed = Utils.generateFailEmbed(`Bot Update Fail!`, "${err}")
+                let embed = Utils.generateFailEmbed(`Failed to Update, Will not Restart!\n\n> ${err}`, "Bot Update Fail!")
                 message.say(embed)
             })
     }
