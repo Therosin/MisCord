@@ -54,12 +54,14 @@ module.exports = class MisServerInfoCommand extends Command {
             args: [
                 {
                     key: 'serverId',
-                    prompt: 'enter the serverId to get info for',
+                    prompt: 'enter the serverName or serverId to get info for',
                     type: 'string',
+                    /**
                     validate: serverId => {
                         if (serverId.length != 6) return 'invalid serverId';
                         return true
                     }
+                    */
                 },
             ]
         });
