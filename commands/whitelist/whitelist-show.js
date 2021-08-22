@@ -20,12 +20,14 @@ module.exports = class MisShowWhitelistCommand extends Command {
             args: [
                 {
                     key: 'serverId',
-                    prompt: 'enter the serverId to show the whitelist for',
+                    prompt: 'enter the serverName or serverId to show the whitelist for',
                     type: 'string',
+                    /**
                     validate: serverId => {
-                        if (serverId.length != 6 ) return 'invalid serverId';
+                        if (serverId.length != 6) return 'invalid serverId';
                         return true
                     }
+                    */
                 },
             ]
         });
@@ -56,6 +58,10 @@ module.exports = class MisShowWhitelistCommand extends Command {
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
                         return res
                     })
+                    || 
+                    await this.client.MiscreatedServers.getServer(message.guild.id, { server_name: serverId }).then(res => {
+                        return res
+                    })
                 )
             } catch (err) {
                 reject(err)
@@ -84,11 +90,11 @@ module.exports = class MisShowWhitelistCommand extends Command {
                     //* Fetched ServerInfo
                     .then(async whitelist => {
                         if (whitelist && Array.isArray(whitelist)) {
-                            let message_text = `__Whitelist__\n`
+                            let message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT WHITELIST :**\n`
                             if (whitelist.length >= 1) {
                                 for (const steamId of whitelist) {
                                     await this.client.SteamWebApi.getSteamProfile(steamId).then(profile => {
-                                        let playerDetail = `\n > **SteamId**: ${steamId} `
+                                        let playerDetail = `\n > <:mark_yes:827460929028489236> **SteamId**: ${steamId} `
                                         if (profile) {
                                             let communityVisability = "Unknown"
                                             if (profile.visibilityState) {
@@ -103,7 +109,7 @@ module.exports = class MisShowWhitelistCommand extends Command {
                                     })
                                 }
                             } else {
-                                message_text += "\n NO PLAYERS IN WHITELIST"
+                                message_text += "\n> NO PLAYERS IN WHITELIST !"
                             }
                             let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
                             message.say(embed)

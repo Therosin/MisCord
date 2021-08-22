@@ -22,12 +22,14 @@ module.exports = class MisServerRestartCommand extends Command {
             args: [
                 {
                     key: 'serverId',
-                    prompt: 'enter the serverId to send a message',
+                    prompt: 'enter the serverName or serverId to send a message',
                     type: 'string',
+                    /**
                     validate: serverId => {
                         if (serverId.length != 6) return 'invalid serverId';
                         return true
                     }
+                    */
                 },
                 {
                     key: 'messageContent',
@@ -61,6 +63,10 @@ module.exports = class MisServerRestartCommand extends Command {
             try {
                 fulfill(
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
+                        return res
+                    })
+                    || 
+                    await this.client.MiscreatedServers.getServer(message.guild.id, { server_name: serverId }).then(res => {
                         return res
                     })
                 )

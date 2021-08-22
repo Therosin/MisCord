@@ -48,9 +48,9 @@ module.exports = class MisServerListCommand extends Command {
                     embed = Utils.generateFailEmbed("No Configured servers", "No Servers", "no servers have been configured, add some with server-add")
                 } else {
                     // try to build a list out of the returned servers and send them back in a nice embed
-                    let text = ""
+                    let text = "<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **REGISTERED SERVERS**"
                     data.forEach(server => {
-                        let line = `\n \n <:server:827461152904314911> [**Name**]: ${server.server_name} | [**id**]: ${server.server_id}\n [**hostname/ip**]: ${server.server_ip}\n [**gameport**]: ${server.server_gameport} | [**rconport**]: ${server.server_rconport}`
+                        let line = `\n \n > <:server:827461152904314911> [**Name**]: ${server.server_name} | [**id**]: ${server.server_id}\n > [**hostname/ip**]: ${server.server_ip}\n > [**gameport**]: ${server.server_gameport} | [**rconport**]: ${server.server_rconport}`
                         text = text + line
                     });
 
