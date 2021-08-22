@@ -89,7 +89,7 @@ module.exports = class MisShowBanlistCommand extends Command {
                     //* Fetched ServerInfo
                     .then(async banlist => {
                         if (banlist && Array.isArray(banlist)) {
-                            let message_text = `<:svaltek:827467970707062834>\n\n**Current Banlist :**\n\n`
+                            let message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **Current Banlist :**\n`
                             if (banlist.length >= 1) {
                                 for (const steamId of banlist) {
                                     await this.client.SteamWebApi.getSteamProfile(steamId).then(profile => {
@@ -108,7 +108,7 @@ module.exports = class MisShowBanlistCommand extends Command {
                                     })
                                 }
                             } else {
-                                message_text += "\n NO PLAYERS IN BANLIST"
+                                message_text += "\n> NO PLAYERS IN BANLIST !"
                             }
                             let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
                             message.say(embed)
