@@ -54,12 +54,14 @@ module.exports = class MisServerInfoCommand extends Command {
             args: [
                 {
                     key: 'serverId',
-                    prompt: 'enter the serverId to get info for',
+                    prompt: 'enter the serverName or serverId to get info for',
                     type: 'string',
+                    /**
                     validate: serverId => {
                         if (serverId.length != 6) return 'invalid serverId';
                         return true
                     }
+                    */
                 },
             ]
         });
@@ -89,6 +91,10 @@ module.exports = class MisServerInfoCommand extends Command {
             try {
                 fulfill(
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
+                        return res
+                    })
+                    || 
+                    await this.client.MiscreatedServers.getServer(message.guild.id, { server_name: serverId }).then(res => {
                         return res
                     })
                 )

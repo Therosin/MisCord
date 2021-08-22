@@ -32,7 +32,7 @@ module.exports = class MisServerRestartCommand extends Command {
                 },
                 {
                     key: 'restartTime',
-                    prompt: 'how long untill restart (minutes: defaults to 1)',
+                    prompt: 'how long until restart (minutes: defaults to 1)',
                     default: "1",
                     type: 'string'
                 },
