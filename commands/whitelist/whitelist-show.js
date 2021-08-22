@@ -90,7 +90,7 @@ module.exports = class MisShowWhitelistCommand extends Command {
                     //* Fetched ServerInfo
                     .then(async whitelist => {
                         if (whitelist && Array.isArray(whitelist)) {
-                            let message_text = `<:svaltek:827467970707062834>\n\n**${server_status.name}**\n__Current Whitelist :__\n\n`
+                            let message_text = `<:svaltek:827467970707062834>\n\n**Current Whitelist :**\n\n`
                             if (whitelist.length >= 1) {
                                 for (const steamId of whitelist) {
                                     await this.client.SteamWebApi.getSteamProfile(steamId).then(profile => {
