@@ -89,7 +89,7 @@ module.exports = class MisShowBanlistCommand extends Command {
                     //* Fetched ServerInfo
                     .then(async banlist => {
                         if (banlist && Array.isArray(banlist)) {
-                            let message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT WHITELIST :**\n`
+                            let message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT BANLIST :**\n`
                             if (banlist.length >= 1) {
                                 for (const steamId of banlist) {
                                     await this.client.SteamWebApi.getSteamProfile(steamId).then(profile => {
