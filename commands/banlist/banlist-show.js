@@ -21,10 +21,12 @@ module.exports = class MisShowBanlistCommand extends Command {
                     key: 'serverId',
                     prompt: 'enter the serverId to show the banlist for',
                     type: 'string',
+                    /**
                     validate: serverId => {
                         if (serverId.length != 6) return 'invalid serverId';
                         return true
                     }
+                    */
                 },
             ]
         });
@@ -55,6 +57,10 @@ module.exports = class MisShowBanlistCommand extends Command {
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
                         return res
                     })
+                    || 
+                    await this.client.MiscreatedServers.getServer(message.guild.id, { server_name: serverId }).then(res => {
+                        return res
+                    })
                 )
             } catch (err) {
                 reject(err)
@@ -83,11 +89,11 @@ module.exports = class MisShowBanlistCommand extends Command {
                     //* Fetched ServerInfo
                     .then(async banlist => {
                         if (banlist && Array.isArray(banlist)) {
-                            let message_text = `__Banlist__\n`
+                            let message_text = `<:svaltek:827467970707062834>\n\n**${server_status.name}**\n__Current Banlist :__\n\n`
                             if (banlist.length >= 1) {
                                 for (const steamId of banlist) {
                                     await this.client.SteamWebApi.getSteamProfile(steamId).then(profile => {
-                                        let playerDetail = `\n > **SteamId**: ${steamId} `
+                                        let playerDetail = `\n >  <:mark_no:827460913459625995>  **SteamId**: ${steamId} `
                                         if (profile) {
                                             let communityVisability = "Unknown"
                                             if (profile.visibilityState) {
