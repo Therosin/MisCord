@@ -19,7 +19,7 @@ module.exports = class MisShowBanlistCommand extends Command {
             args: [
                 {
                     key: 'serverId',
-                    prompt: 'enter the serverId to show the banlist for',
+                    prompt: 'enter the serverName or serverId to show the banlist for',
                     type: 'string',
                     /**
                     validate: serverId => {
