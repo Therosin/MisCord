@@ -109,7 +109,7 @@ module.exports = class MisShowWhitelistCommand extends Command {
                                     })
                                 }
                             } else {
-                                message_text += "\n NO PLAYERS IN WHITELIST"
+                                message_text += "\n> NO PLAYERS IN WHITELIST !"
                             }
                             let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
                             message.say(embed)
