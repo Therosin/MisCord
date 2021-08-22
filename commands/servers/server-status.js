@@ -82,13 +82,17 @@ module.exports = class MisServerInfoCommand extends Command {
     async run(message, args) {
         message.delete();
         let serverId = args.serverId
-        if (!serverId) { return message.say("You must specify a serverId to get info for.") }
+        if (!serverId) { return message.say("You must specify serverName or serverId to get info for.") }
 
         return new Promise(async (fulfill, reject) => {
 
             try {
                 fulfill(
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
+                        return res
+                    })
+                    || 
+                    await this.client.MiscreatedServers.getServer(message.guild.id, { server_name: serverId }).then(res => {
                         return res
                     })
                 )
