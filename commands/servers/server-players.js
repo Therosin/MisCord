@@ -2,7 +2,7 @@ const { Command } = require('discord.js-commando');
 
 const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop")
-
+const pagedEmbed = require('../../types/pagedEmbed');
 
 
 const CommandAllowRoles = ["Miscord-User", "miscord-user"]
@@ -26,9 +26,10 @@ function validPlayerArray(playersArray) {
  * @param {Object} SteamWebApi reference to client steamwebapi object
  */
 
-const genPlayerEntries = async (server, message_text, SteamWebApi) => {
+const genPlayerEntries = async (server, SteamWebApi) => {
+    let playerArray = []
     for (const player of server.playersArray) {
-        let playerDetail = `\n \n > **Name**: ${player.name} | **SteamID**: ${player.steam}[ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping} | `;
+        let playerDetail = `> [ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping} | `;
         await SteamWebApi.getSteamProfile(player.steam).then(profile => {
             if (profile) {
                 let communityVisability = "Unknown";
@@ -40,12 +41,12 @@ const genPlayerEntries = async (server, message_text, SteamWebApi) => {
                 playerDetail += `**SteamName**: [${profile.nickname}](${profile.url}) | **Profile**:${communityVisability}`;
             }
         });
-        message_text += playerDetail;
+        playerArray.push({name: `**Name**: ${player.name} | **SteamID**: ${player.steam}`, value = `${playerDetail}`})
     }
-    return message_text
+    return playerArray
 };
 
-const genPlayerList = (server, message_text, SteamWebApi) => {
+const genPlayerList = (server, SteamWebApi) => {
     return new Promise(async (fulfill, reject) => {
         if (!server || !message_text) {
             // server and message_text are required
@@ -53,8 +54,8 @@ const genPlayerList = (server, message_text, SteamWebApi) => {
         } else {
             // Check we have valid players
             if (validPlayerArray(server.playersArray)) {
-                await genPlayerEntries(server, message_text, SteamWebApi)
-                    .then(message_text => { fulfill(message_text) })
+                await genPlayerEntries(server, SteamWebApi)
+                    .then(playerList => { fulfill(playerList) })
                     .catch(err => { reject(err) });
             }
         }
@@ -149,10 +150,13 @@ module.exports = class MisServerInfoCommand extends Command {
 <:server:827461152904314911> **${server_status.name}**
 
 <:antenna:827461128971747348>  __Players online__  : ${server_status.players}`;
-                        return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {
+                        return genPlayerList(server_status, this.client.SteamWebApi).then(playerList => {
 
-                            let embed = Utils.generateSuccessEmbed(message_text_1, "Success fetching Server Info");
+                            let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info");
                             message.say(embed);
+
+
+                            return pagedEmbed.sendPagedEmbed (message,`Player List`,playerList)
                         });
                     } else {
                         let embed_1 = Utils.generateFailEmbed(`Couldnt parse response from server`, "Failed to fetch Server Info!");

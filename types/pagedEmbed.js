@@ -40,7 +40,7 @@ module.exports = class pagedEmbed {
      * @param {number} start The index to start from.
      * @returns {Promise<MessageEmbed>}
      */
-    generatePagedEmbed = async (title, data, start) => {
+    static generatePagedEmbed = async (title, data, start) => {
         if (!Array.isArray(data)) { return };
 
         const current = data.slice(start, start + 10)
@@ -64,7 +64,7 @@ module.exports = class pagedEmbed {
      * @param {Array}   data        data to paginate: must be an array of {name: "fieldname", value:"fieldcontent"}
      * @returns 
      */
-    sendPagedEmbed = async (message, title, data) => {
+    static sendPagedEmbed = async (message, title, data) => {
 
         const { channel } = message
 
