@@ -89,6 +89,42 @@ module.exports = class BotUtils {
 		return embed
 	}
 
+	static sendPagedEmbed = (message, pages) => {
+		let page = 1;
+		const embed = new MessageEmbed()
+			.setColor(0xffffff) //sets color here
+			.setFooter(`Page ${page} of ${pages.length}`)
+			.setDescription(pages[page - 1])
+
+		message.channel.send(embed).then(msg => {
+			msg.react('⏪').then(r => {
+				msg.react('⏩');
+				//filters
+				const isBackwards = (reaction, user) => reaction.emoji.name === '⏪' && user.id === message.author.id;
+				const isForwards = (reaction, user) => reaction.emoji.name === '⏩' && user.id === message.author.id;
+
+				const backwards = msg.createReactionCollector(isBackwards);
+				const forwards = msg.createReactionCollector(isForwards);
+
+				backwards.on("collect", r => {
+					if (page === 1) return;
+					page--;
+					embed.setDescription(pages[page - 1]);
+					embed.setFooter(`Page ${page} of ${pages.length}`);
+					msg.edit(embed)
+				});
+
+				forwards.on("collect", r => {
+					if (page === pages.length) return;
+					page++;
+					embed.setDescription(pages[page - 1]);
+					embed.setFooter(`Page ${page} of ${pages.length}`);
+					msg.edit(embed)
+				});
+			});
+		});
+	}
+
 	/**
 	 *  SINGLE- LINE AWAITMESSAGE
 	 *  A simple way to grab a single reply, from the user that initiated

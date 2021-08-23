@@ -29,7 +29,7 @@ function validPlayerArray(playersArray) {
 const genPlayerEntries = async (server, SteamWebApi) => {
     let playerArray = []
     for (const player of server.playersArray) {
-        let playerDetail = `[ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping}`;
+        let playerDetail = `[rep](https://steamrep.com/search?q=${player.steam})\n > **ping**: ${player.ping}`;
         await SteamWebApi.getSteamProfile(player.steam).then(profile => {
             if (profile) {
                 let communityVisability = "Unknown";
@@ -41,7 +41,7 @@ const genPlayerEntries = async (server, SteamWebApi) => {
                 playerDetail += `**SteamName**: [${profile.nickname}](${profile.url}) | **Profile**:${communityVisability}`;
             }
         });
-        playerArray.push({ name: `**Name**: ${player.name} | **SteamID**: ${player.steam}`, value: `> ${playerDetail}` })
+        playerArray.push(`**Name**: ${player.name} | **SteamID**: ${player.steam}\n> ${playerDetail}`)
     }
     return playerArray
 };
@@ -157,7 +157,7 @@ module.exports = class MisServerInfoCommand extends Command {
                             message.say(embed);
 
                             if (this.client.isDebugBuild) { console.log(`Sending Paged Embed with data: ${playerList}`); };
-                            return pagedEmbed.sendPagedEmbed(message, `Player List`, playerList)
+                            return Utils.sendPagedEmbed(message, playerList)
                         });
                     } else {
                         let embed_1 = Utils.generateFailEmbed(`Couldnt parse response from server`, "Failed to fetch Server Info!");
