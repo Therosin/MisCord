@@ -29,7 +29,7 @@ function validPlayerArray(playersArray) {
 const genPlayerEntries = async (server, SteamWebApi) => {
     let playerArray = []
     for (const player of server.playersArray) {
-        let playerDetail = `> [ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping} | `;
+        let playerDetail = `[ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping}`;
         await SteamWebApi.getSteamProfile(player.steam).then(profile => {
             if (profile) {
                 let communityVisability = "Unknown";
@@ -41,7 +41,7 @@ const genPlayerEntries = async (server, SteamWebApi) => {
                 playerDetail += `**SteamName**: [${profile.nickname}](${profile.url}) | **Profile**:${communityVisability}`;
             }
         });
-        playerArray.push({ name: `**Name**: ${player.name} | **SteamID**: ${player.steam}`, value = playerDetail })
+        playerArray.push({ name: `**Name**: ${player.name} | **SteamID**: ${player.steam}`, value: `> ${playerDetail}` })
     }
     return playerArray
 };
