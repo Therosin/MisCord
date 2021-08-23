@@ -151,7 +151,7 @@ module.exports = class MisServerInfoCommand extends Command {
 <:server:827461152904314911> **${server_status.name}**
 
 <:antenna:827461128971747348>  __Players online__  : ${server_status.players}`;
-                        return genPlayerList(server, this.client.SteamWebApi).then(playerList => {
+                        return genPlayerList(server_status, this.client.SteamWebApi).then(playerList => {
 
                             let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info");
                             message.say(embed);
