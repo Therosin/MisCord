@@ -123,11 +123,12 @@ module.exports = class MisServerInfoCommand extends Command {
             }
         })
             .then(async result => {
+                let server
                 try {
                     const server_status = await new Promise(async (fulfill, reject) => {
                         if (result && result.server_id) {
                             try {
-                                let server = new Interop(result.server_ip, result.server_rconport, result.server_password);
+                                server = new Interop(result.server_ip, result.server_rconport, result.server_password);
                                 // ensure we have a valid server object.
                                 if (!server.server) { reject(`failed to create misrcon interface for server: ${serverId}`); }
 
@@ -150,12 +151,12 @@ module.exports = class MisServerInfoCommand extends Command {
 <:server:827461152904314911> **${server_status.name}**
 
 <:antenna:827461128971747348>  __Players online__  : ${server_status.players}`;
-                        return genPlayerList(server_status, this.client.SteamWebApi).then(playerList => {
+                        return genPlayerList(server, this.client.SteamWebApi).then(playerList => {
 
                             let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info");
                             message.say(embed);
 
-
+                            if (this.client.isDebugBuild) { console.log(`Sending Paged Embed with data: ${playerList}`); };
                             return pagedEmbed.sendPagedEmbed(message, `Player List`, playerList)
                         });
                     } else {
