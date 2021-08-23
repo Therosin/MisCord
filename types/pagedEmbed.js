@@ -47,7 +47,7 @@ module.exports = class pagedEmbed {
 
         // You can of course customise this embed however you want
         return new MessageEmbed({
-            title: `${title} ${start + 1}-${start + current.length} of ${guilds.length}`,
+            title: `${title} ${start + 1}-${start + current.length} of ${data.length}`,
             fields: await Promise.all(
                 current.map(async entry => ({
                     name: entry.name,
