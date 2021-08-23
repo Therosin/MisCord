@@ -2,7 +2,6 @@ const { Command } = require('discord.js-commando');
 
 const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop")
-const pagedEmbed = require('../../types/pagedEmbed');
 
 
 const CommandAllowRoles = ["Miscord-User", "miscord-user"]
