@@ -48,8 +48,8 @@ const genPlayerEntries = async (server, SteamWebApi) => {
 
 const genPlayerList = (server, SteamWebApi) => {
     return new Promise(async (fulfill, reject) => {
-        if (!server || !message_text) {
-            // server and message_text are required
+        if (!server) {
+            // server is required
             reject("Invalid params")
         } else {
             // Check we have valid players
