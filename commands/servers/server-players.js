@@ -41,7 +41,7 @@ const genPlayerEntries = async (server, SteamWebApi) => {
                 playerDetail += `**SteamName**: [${profile.nickname}](${profile.url}) | **Profile**:${communityVisability}`;
             }
         });
-        playerArray.push({name: `**Name**: ${player.name} | **SteamID**: ${player.steam}`, value = `${playerDetail}`})
+        playerArray.push({ name: `**Name**: ${player.name} | **SteamID**: ${player.steam}`, value = playerDetail })
     }
     return playerArray
 };
@@ -113,7 +113,7 @@ module.exports = class MisServerInfoCommand extends Command {
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
                         return res
                     })
-                    || 
+                    ||
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_name: serverId }).then(res => {
                         return res
                     })
@@ -156,7 +156,7 @@ module.exports = class MisServerInfoCommand extends Command {
                             message.say(embed);
 
 
-                            return pagedEmbed.sendPagedEmbed (message,`Player List`,playerList)
+                            return pagedEmbed.sendPagedEmbed(message, `Player List`, playerList)
                         });
                     } else {
                         let embed_1 = Utils.generateFailEmbed(`Couldnt parse response from server`, "Failed to fetch Server Info!");
