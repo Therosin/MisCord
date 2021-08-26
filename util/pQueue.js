@@ -1,87 +1,142 @@
-// Copyright (C) 2021 Theros @[MisModding|SvalTek]
-// 
-// This file is part of MisCord.
-// 
-// MisCord is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// MisCord is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with MisCord.  If not, see <http://www.gnu.org/licenses/>.
-
-
-module.exports = class pQueue {
+class pQueue {
   queue = [];
-  pendingPromise = false;
+  workingOnPromise = false;
+  pendingStop = false;
+
   constructor(queue) {
-    if (queue != undefined && Array.isArray(queue)) {
-      for (job of queue.values) {
-        this.enqueue(job)
+      if (queue != undefined && Array.isArray(queue)) {
+          for (let job of queue.values()) {
+              this.enqueue(job)
+          }
       }
-    }
   }
 
   /**
-   * Add a Promise to this queue
+   * Enqueue a Promise for this pQueue
    * @param {promise} promise 
    */
   enqueue(promise) {
-    return new Promise((resolve, reject) => {
-      this.queue.push({
-        promise,
-        resolve,
-        reject,
+      return new Promise((resolve, reject) => {
+          this.queue.push({
+              promise,
+              resolve,
+              reject,
+          });
       });
-    });
   }
 
-  dequeue() {
-    if (this.workingOnPromise) {
-      return false;
-    }
-    const item = this.queue.shift();
-    if (!item) {
-      return false;
-    }
-    try {
-      this.workingOnPromise = true;
-      item.promise()
-        .then((value) => {
-          this.workingOnPromise = false;
-          item.resolve(value);
-          this.dequeue();
-        })
-        .catch(err => {
+  /**
+   * Run and dequeue a promise from this pQueue
+   * @returns Promise
+   */
+  async dequeue() {
+      if (this.workingOnPromise) {
+          return false;
+      }
+      if (this.pendingStop) {
+          this.queue = [];
+          this.stop = false;
+          return;
+      }
+      const item = this.queue.shift();
+      if (!item) {
+          return false;
+      }
+      try {
+          this.workingOnPromise = true;
+          await item.promise()
+              .then(value => {
+                  this.workingOnPromise = false;
+                  item.resolve(value);
+                  this.dequeue();
+              })
+              .catch(err => {
+                  this.workingOnPromise = false;
+                  item.reject(err);
+                  this.dequeue();
+              })
+      } catch (err) {
           this.workingOnPromise = false;
           item.reject(err);
           this.dequeue();
-        })
-    } catch (err) {
-      this.workingOnPromise = false;
-      item.reject(err);
-      this.dequeue();
-    }
-    return true;
+      }
+      return true;
   }
 
   /**
-   *  Check if this task is "Runnable"
-   *  returns true if this Queue has tasks and is not currently waiting on a task
+   *  Check if this pQueue is "Runnable"
+   *  returns true if this Queue has tasks and is not currently waiting on a task or a pending stop
    */
   runnable() {
-    return ((this.queue.length >= 1) && (!this.workingOnPromise))
+      return ((this.queue.length >= 1) && (!this.workingOnPromise) && (!this.pendingStop))
   }
 
   /**
-   * Run this Queue
+   * Run this pQueue
    */
   async run() {
-    return this.dequeue();
+      return await this.dequeue();
+  }
+
+  /**
+   * Signal to this pQueue to stop, it will stop as soon as the current Promise has compleated
+   */
+  stop() {
+      this.pendingStop = true
   }
 }
+
+module.exports = pQueue
+
+
+//
+// ──────────────────────────────────────────────────────────── USAGE EXAMPLE ─────
+//
+
+const test = function () {
+  function sleep(sleepDuration) {
+      var now = new Date().getTime();
+      while (new Date().getTime() < now + sleepDuration) { /* Do nothing */ }
+  }
+
+  //const pQueue = require('./util/pQueue')
+  let queue = new pQueue()
+  let results = []
+
+  // queue some promises
+
+  queue.enqueue(() => {
+
+      return new Promise((resolve, reject) => {
+          sleep(2000)
+          console.log("Promise1")
+          resolve("promise 1 ok")
+      })
+          .then(result => {
+              results.push({ "status": "OK", "result": result })
+          })
+
+  })
+
+  queue.enqueue(() => {
+
+      return new Promise((resolve, reject) => {
+          sleep(1000)
+          console.log("Promise2")
+          resolve("promise 2 ok")
+      })
+          .then(result => {
+              results.push({ "status": "OK", "result": result })
+          })
+
+  })
+
+  //run queue
+  queue.run()
+      .then(() => {
+          console.log("results:")
+          console.log(results)
+      })
+}
+
+//test() //uncomment to run tests
