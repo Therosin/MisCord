@@ -171,4 +171,23 @@ module.exports = class BotUtils {
 		return text;
 	};
 
+/**
+ * Returns an array sliced into arrays of a given size.
+ *
+ * @param array {Array} array to split
+ * @param chunk_size {Integer} Size of every group
+ */
+	static slicedArray(array, chunk_size) {
+		var index = 0;
+		var arrayLength = array.length;
+		var tempArray = [];
+
+		for (index = 0; index < arrayLength; index += chunk_size) {
+			current_chunk = array.slice(index, index + chunk_size);
+			// Do something if you want with the group
+			tempArray.push(current_chunk);
+		}
+
+		return tempArray;
+	}
 };

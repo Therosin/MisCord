@@ -53,8 +53,18 @@ const genPlayerList = (server, SteamWebApi) => {
         } else {
             // Check we have valid players
             if (validPlayerArray(server.playersArray)) {
+                // generate playerInfo for each entry
                 await genPlayerEntries(server, SteamWebApi)
-                    .then(playerList => { fulfill(playerList) })
+                    .then(playerEntries => {
+                        // parse out the returned array of player daata into groups of 10,
+                        // then join them into pages of players split by newlines and return
+                        let playerList = [];
+                        const players = slicedArray(playerEntries, 2)
+                        players.forEach((data) => {
+                            playerList.push(data.join(`\n`))
+                        })
+                        fulfill(playerList)
+                    })
                     .catch(err => { reject(err) });
             }
         }
