@@ -112,7 +112,7 @@ module.exports = class MisShowBanlistCommand extends Command {
                                 })
                                 let pages = [];
                                 playerList = Utils.slicedArray(playerList, 10)
-                                playerList.forEach(page => { pages.push(page) })
+                                playerList.forEach(page => { pages.push(page.join(`\n`)) })
                                 let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
                                 message.say(embed)
                                 return Utils.sendPagedEmbed(message, pages)
