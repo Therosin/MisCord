@@ -183,7 +183,7 @@ module.exports = class BotUtils {
 		var tempArray = [];
 
 		for (index = 0; index < arrayLength; index += chunk_size) {
-			current_chunk = array.slice(index, index + chunk_size);
+			let current_chunk = array.slice(index, index + chunk_size);
 			// Do something if you want with the group
 			tempArray.push(current_chunk);
 		}
