@@ -109,7 +109,7 @@ module.exports = class MisShowBanlistCommand extends Command {
                                         playerDetail += ` [ [rep](https://steamrep.com/search?q=${steamId}) ]\n`
                                         playerList.push(playerDetail)
                                     })
-                                })
+                                },this)
                                 let pages = [];
                                 playerList = Utils.slicedArray(playerList, 10)
                                 playerList.forEach(page => { pages.push(page.join(`\n`)) })
