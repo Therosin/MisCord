@@ -60,7 +60,9 @@ module.exports = class MisServerListCommand extends Command {
                     serverList.forEach(page => {
                         pages.push(page.join(`\n`))
                     })
-                    Utils.sendPagedEmbed(text, pages)
+                    let embed = Utils.generateSuccessEmbed(text, "Success fetching Server Info");
+                    message.say(embed);
+                    return Utils.sendPagedEmbed(message, pages)
                 }
             })
 

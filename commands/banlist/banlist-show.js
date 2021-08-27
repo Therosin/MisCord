@@ -113,7 +113,9 @@ module.exports = class MisShowBanlistCommand extends Command {
                                 let pages = [];
                                 playerList = Utils.slicedArray(playerList, 10)
                                 playerList.forEach(page => { pages.push(page) })
-                                return Utils.sendPagedEmbed(message_text, pages)
+                                let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
+                                message.say(embed)
+                                return Utils.sendPagedEmbed(message, pages)
                             } else {
                                 message_text += "\n> NO PLAYERS IN BANLIST !"
                                 let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
