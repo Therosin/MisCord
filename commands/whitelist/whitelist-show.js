@@ -95,7 +95,7 @@ module.exports = class MisShowWhitelistCommand extends Command {
                             if (whitelist.length >= 1) {
 
                                 let playerList = [];
-                                whitelist.forEach(async steamId => {
+                                for (const steamId of whitelist) {
                                     await this.client.SteamWebApi.getSteamProfile(steamId).then(profile => {
                                         let playerDetail = `\n > <:mark_yes:827460929028489236> **SteamId**: ${steamId} `
                                         if (profile) {
@@ -110,10 +110,10 @@ module.exports = class MisShowWhitelistCommand extends Command {
                                         playerDetail += ` [ [rep](https://steamrep.com/search?q=${steamId}) ]\n`
                                         playerList.push(playerDetail);
                                     })
-                                }, this)
+                                }
                                 let pages = [];
-                                playerList = Utils.slicedArray(playerList, 10)
-                                playerList.forEach(page => { pages.push(page.join(`\n`)) })
+                                let players = Utils.slicedArray(playerList, 10)
+                                players.forEach(page => { pages.push(page.join(`\n`)) })
 
                                 let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info");
                                 message.say(embed);

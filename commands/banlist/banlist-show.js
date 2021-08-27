@@ -94,9 +94,9 @@ module.exports = class MisShowBanlistCommand extends Command {
                             if (banlist.length >= 1) {
 
                                 let playerList = [];
-                                banlist.forEach(async steamId => {
+                                for (const steamId of banlist) {
                                     await this.client.SteamWebApi.getSteamProfile(steamId).then(profile => {
-                                        let playerDetail = `\n >  <:mark_no:827460913459625995>  **SteamId**: ${steamId} `
+                                        let playerDetail = `\n > <:mark_yes:827460929028489236> **SteamId**: ${steamId} `
                                         if (profile) {
                                             let communityVisability = "Unknown"
                                             if (profile.visibilityState) {
@@ -107,12 +107,12 @@ module.exports = class MisShowBanlistCommand extends Command {
                                             playerDetail += `\n >    **SteamName**: [${profile.nickname}](${profile.url}) | **SteamPrivacy**:${communityVisability}`
                                         }
                                         playerDetail += ` [ [rep](https://steamrep.com/search?q=${steamId}) ]\n`
-                                        playerList.push(playerDetail)
+                                        playerList.push(playerDetail);
                                     })
-                                },this)
+                                }
                                 let pages = [];
-                                playerList = Utils.slicedArray(playerList, 10)
-                                playerList.forEach(page => { pages.push(page.join(`\n`)) })
+                                let players = Utils.slicedArray(playerList, 10)
+                                players.forEach(page => { pages.push(page.join(`\n`)) })
                                 let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
                                 message.say(embed)
                                 return Utils.sendPagedEmbed(message, pages)
