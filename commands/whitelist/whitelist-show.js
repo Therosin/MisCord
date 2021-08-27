@@ -88,7 +88,7 @@ module.exports = class MisShowWhitelistCommand extends Command {
 
                 })
                     //* Fetched ServerInfo
-                    .then(whitelist => {
+                    .then(async whitelist => {
                         let message_text = ""
                         if (whitelist && Array.isArray(whitelist)) {
                             message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT WHITELIST :**\n`

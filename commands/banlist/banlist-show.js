@@ -87,7 +87,7 @@ module.exports = class MisShowBanlistCommand extends Command {
 
                 })
                     //* Fetched ServerInfo
-                    .then(banlist => {
+                    .then( async banlist => {
                         let message_text = ""
                         if (banlist && Array.isArray(banlist)) {
                             message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT BANLIST :**\n`
