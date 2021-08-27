@@ -88,8 +88,9 @@ module.exports = class MisShowBanlistCommand extends Command {
                 })
                     //* Fetched ServerInfo
                     .then(banlist => {
+                        let message_text = ""
                         if (banlist && Array.isArray(banlist)) {
-                            let message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT BANLIST :**\n`
+                            message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT BANLIST :**\n`
                             if (banlist.length >= 1) {
 
                                 let playerList = [];
@@ -109,7 +110,6 @@ module.exports = class MisShowBanlistCommand extends Command {
                                         playerList.push(playerDetail)
                                     })
                                 })
-
                                 let pages = [];
                                 playerList = Utils.slicedArray(playerList, 10)
                                 playerList.forEach(page => { pages.push(page) })
