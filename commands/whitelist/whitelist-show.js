@@ -3,7 +3,7 @@ const Utils = require("../../util/BotUtils")
 const Interop = require("../../Plugins/MiscreatedInterop")
 
 
-const CommandAllowRoles = ["Miscord-User","miscord-user"]
+const CommandAllowRoles = ["Miscord-User", "miscord-user"]
 
 
 module.exports = class MisShowWhitelistCommand extends Command {
@@ -35,15 +35,15 @@ module.exports = class MisShowWhitelistCommand extends Command {
 
 
     hasPermission(msg) {
-        if ( this.client.isOwner(msg.author) ) {
-			return true
-		};
+        if (this.client.isOwner(msg.author)) {
+            return true
+        };
 
-		if ( msg.member.roles.cache.some(r=>CommandAllowRoles.includes(r.name)) ) {
-			return true
-		  } else {
-			return "You do not Have Permission to Use this Command"
-		  }
+        if (msg.member.roles.cache.some(r => CommandAllowRoles.includes(r.name))) {
+            return true
+        } else {
+            return "You do not Have Permission to Use this Command"
+        }
     }
 
     async run(message, args) {
@@ -58,7 +58,7 @@ module.exports = class MisShowWhitelistCommand extends Command {
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
                         return res
                     })
-                    || 
+                    ||
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_name: serverId }).then(res => {
                         return res
                     })
@@ -88,11 +88,14 @@ module.exports = class MisShowWhitelistCommand extends Command {
 
                 })
                     //* Fetched ServerInfo
-                    .then(async whitelist => {
+                    .then(whitelist => {
+                        let message_text = ""
                         if (whitelist && Array.isArray(whitelist)) {
-                            let message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT WHITELIST :**\n`
+                            message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT WHITELIST :**\n`
                             if (whitelist.length >= 1) {
-                                for (const steamId of whitelist) {
+
+                                let playerList = [];
+                                whitelist.forEach(async steamId => {
                                     await this.client.SteamWebApi.getSteamProfile(steamId).then(profile => {
                                         let playerDetail = `\n > <:mark_yes:827460929028489236> **SteamId**: ${steamId} `
                                         if (profile) {
@@ -107,12 +110,15 @@ module.exports = class MisShowWhitelistCommand extends Command {
                                         playerDetail += ` [ [rep](https://steamrep.com/search?q=${steamId}) ]\n`
                                         message_text += playerDetail
                                     })
-                                }
+                                })
+                                let pages = [];
+                                playerList = Utils.slicedArray(playerList, 10)
+                                playerList.forEach(page => { pages.push(page) })
+                                return Utils.sendPagedEmbed(message_text, pages)
                             } else {
                                 message_text += "\n> NO PLAYERS IN WHITELIST !"
+                                return message.say(embed)
                             }
-                            let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
-                            message.say(embed)
 
                         } else {
                             let embed = Utils.generateFailEmbed(`Couldnt parse response from server`, "Failed to fetch Server Info!")
