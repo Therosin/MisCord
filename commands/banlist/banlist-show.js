@@ -57,7 +57,7 @@ module.exports = class MisShowBanlistCommand extends Command {
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
                         return res
                     })
-                    || 
+                    ||
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_name: serverId }).then(res => {
                         return res
                     })
@@ -87,11 +87,13 @@ module.exports = class MisShowBanlistCommand extends Command {
 
                 })
                     //* Fetched ServerInfo
-                    .then(async banlist => {
+                    .then(banlist => {
                         if (banlist && Array.isArray(banlist)) {
                             let message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT BANLIST :**\n`
                             if (banlist.length >= 1) {
-                                for (const steamId of banlist) {
+
+                                let playerList = [];
+                                banlist.forEach(async steamId => {
                                     await this.client.SteamWebApi.getSteamProfile(steamId).then(profile => {
                                         let playerDetail = `\n >  <:mark_no:827460913459625995>  **SteamId**: ${steamId} `
                                         if (profile) {
@@ -104,15 +106,19 @@ module.exports = class MisShowBanlistCommand extends Command {
                                             playerDetail += `\n >    **SteamName**: [${profile.nickname}](${profile.url}) | **SteamPrivacy**:${communityVisability}`
                                         }
                                         playerDetail += ` [ [rep](https://steamrep.com/search?q=${steamId}) ]\n`
-                                        message_text += playerDetail
+                                        playerList.push(playerDetail)
                                     })
-                                }
+                                })
+
+                                let pages = [];
+                                playerList = Utils.slicedArray(playerList, 10)
+                                playerList.forEach(page => { pages.push(page) })
+                                return Utils.sendPagedEmbed(message_text, pages)
                             } else {
                                 message_text += "\n> NO PLAYERS IN BANLIST !"
+                                let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
+                                return message.say(embed)
                             }
-                            let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
-                            message.say(embed)
-
                         } else {
                             let embed = Utils.generateFailEmbed(`Couldnt parse response from server`, "Failed to fetch Server Info!")
                             message.say(embed)
