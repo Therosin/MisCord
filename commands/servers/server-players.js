@@ -28,7 +28,7 @@ function validPlayerArray(playersArray) {
 const genPlayerEntries = async (server, SteamWebApi) => {
     let playerArray = []
     for (const player of server.playersArray) {
-        let playerDetail = `[rep](https://steamrep.com/search?q=${player.steam})\n > **ping**: ${player.ping}`;
+        let playerDetail = "";
         await SteamWebApi.getSteamProfile(player.steam).then(profile => {
             if (profile) {
                 let communityVisability = "Unknown";
@@ -37,10 +37,10 @@ const genPlayerEntries = async (server, SteamWebApi) => {
                     if (profile.visibilityState === 2) { communityVisability = "FriendsOnly"; }
                     if (profile.visibilityState === 3) { communityVisability = "Public"; }
                 }
-                playerDetail += `**SteamName**: [${profile.nickname}](${profile.url}) | **Profile**:${communityVisability}`;
+                playerDetail += `> **SteamName**: [${profile.nickname}](${profile.url}) | **Profile**:${communityVisability} [rep](https://steamrep.com/search?q=${player.steam})`;
             }
         });
-        playerArray.push(`**Name**: ${player.name} | **SteamID**: ${player.steam}\n> ${playerDetail}`)
+        playerArray.push(`> **Name**: ${player.name} | **SteamID**: ${player.steam} |  **ping**: ${player.ping}\n${playerDetail}`)
     }
     return playerArray
 };
