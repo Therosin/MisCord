@@ -59,7 +59,7 @@ const genPlayerList = (server, SteamWebApi) => {
                         // parse out the returned array of player daata into groups of 10,
                         // then join them into pages of players split by newlines and return
                         let playerList = [];
-                        const players = slicedArray(playerEntries, 2)
+                        const players = Utils.slicedArray(playerEntries, 2)
                         players.forEach((data) => {
                             playerList.push(data.join(`\n`))
                         })
