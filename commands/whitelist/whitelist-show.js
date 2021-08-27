@@ -108,7 +108,7 @@ module.exports = class MisShowWhitelistCommand extends Command {
                                             playerDetail += `\n >    **SteamName**: [${profile.nickname}](${profile.url}) | **SteamPrivacy**:${communityVisability}`
                                         }
                                         playerDetail += ` [ [rep](https://steamrep.com/search?q=${steamId}) ]\n`
-                                        message_text += playerDetail
+                                        playerList.push(playerDetail);
                                     })
                                 })
                                 let pages = [];
