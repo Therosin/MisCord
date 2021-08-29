@@ -15,31 +15,23 @@
 // You should have received a copy of the GNU General Public License
 // along with MisCord.  If not, see <http://www.gnu.org/licenses/>.
 
-
+require('dotenv').config()
 const express = require('express')
 const path = require('path');
-const mds = require('markdown-serve');
+const cookieParser = require("cookie-parser")
 const app = express();
-const port = 8080;
-
+const port = process.env.NODEJS_HTTP_PORT || 8080;
 
 const apigateway = require('./API/apigateway')
 const discordAPI = require('./API/discordAPI')
 
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser())
-app.use(
-	mds.middleware({
-		rootDirectory: path.resolve(__dirname, 'Public'),
-		view: 'markdown'
-	})
-);
 
-app.use('/api', apigateway)
 app.use('/discord', discordAPI)
 
 app.listen(port, () => console.info(`apiServer listening on port ${port}!`));
