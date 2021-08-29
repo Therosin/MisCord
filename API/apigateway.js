@@ -18,7 +18,6 @@
 
 
 var express = require('express')
-const mds = require('markdown-serve');
 var router = express.Router()
 
 // middleware that is specific to this router

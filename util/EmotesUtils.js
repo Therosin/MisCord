@@ -16,13 +16,11 @@
 // along with MisCord.  If not, see <http://www.gnu.org/licenses/>.
 
 
-const { Command } = require('discord.js-commando');
-
-module.exports = class MisCordCommand extends Command {
-	constructor(client, info) {
-		super(client, info);
-
-		this.argsSingleQuotes = info.argsSingleQuotes || false;
-		this.throttling = info.throttling || { usages: 1, duration: 2 };
-	}
-};
+module.exports = class EmotesUtils {
+    static GetConnectionEmoteFromCurrentPing(value) {
+        if (value <= 90) { return "<:net_high:827461252057661442>" };
+        if (value <= 150) { return "<:net_mid:827461237688238080>" };
+        if (value <= 200) { return "<:net_low:827461224065269760>" };
+        return "<:warningMC:827460865941831690>"
+    }
+}

@@ -1,5 +1,5 @@
 const ServerModel = require('../Models/Servers')
-const Utils = require("../../util/Util")
+const Utils = require("../../util/BotUtils")
 require('dotenv').config()
 let secret = "SomeRealyLongSecretString0x02021"
 

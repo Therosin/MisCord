@@ -24,10 +24,14 @@ const port = 8080;
 
 
 const apigateway = require('./API/apigateway')
+const discordAPI = require('./API/discordAPI')
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser())
 app.use(
 	mds.middleware({
 		rootDirectory: path.resolve(__dirname, 'Public'),
@@ -36,5 +40,6 @@ app.use(
 );
 
 app.use('/api', apigateway)
+app.use('/discord', discordAPI)
 
 app.listen(port, () => console.info(`apiServer listening on port ${port}!`));
