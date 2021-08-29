@@ -42,7 +42,7 @@ const genPlayerEntries = async (server, SteamWebApi) => {
             }
         });
         const pingEmote = EmoteUtils.GetConnectionEmoteFromCurrentPing(player.ping)
-        playerArray.push(`> **Name** : ${player.name} | **SteamID** : ${player.steam} [[rep](https://steamrep.com/search?q=${player.steam})]\n > **Ping** : ${pingEmote} ${player.ping} | ${playerDetail}\n`)
+        playerArray.push(`> **Name** : ${player.name} | **SteamID** : ${player.steam} [[rep](https://steamrep.com/search?q=${player.steam})]\n > **Ping** : ${pingEmote} ${player.ping} | ${playerDetail}\n \n`)
     }
     return playerArray
 };
