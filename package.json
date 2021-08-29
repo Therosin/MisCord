@@ -27,12 +27,9 @@
     "express": "^4.17.1",
     "jade": "^1.11.0",
     "keyv": "^4.0.3",
-    "markdown-serve": "^0.8.0",
     "moment": "^2.29.0",
     "mongoose": "^5.10.7",
     "node-misrcon": "^2.2.4",
-    "sqlite": "^4.0.15",
-    "sqlite3": "^5.0.0",
     "steamapi": "^2.1.2",
     "winston": "^3.3.3"
   }
