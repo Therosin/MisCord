@@ -38,11 +38,11 @@ const genPlayerEntries = async (server, SteamWebApi) => {
                     if (profile.visibilityState === 2) { communityVisability = "Friends Only"; }
                     if (profile.visibilityState === 3) { communityVisability = "Public"; }
                 }
-                playerDetail += `> **SteamName**: [${profile.nickname}](${profile.url}) | **Profile**:${communityVisability} [[rep](https://steamrep.com/search?q=${player.steam})]`;
+                playerDetail += `**SteamName** : [${profile.nickname}](${profile.url}) | **Profile** :${communityVisability}`;
             }
         });
         const pingEmote = EmoteUtils.GetConnectionEmoteFromCurrentPing(player.ping)
-        playerArray.push(`> **Name**: ${player.name} | **SteamID**: ${player.steam} |  **ping**:${pingEmote} ${player.ping}\n${playerDetail}\n\n`)
+        playerArray.push(`> **Name** : ${player.name} | **SteamID** : ${player.steam} [[rep](https://steamrep.com/search?q=${player.steam})]\n > **Ping** : ${pingEmote} ${player.ping} | ${playerDetail}\n`)
     }
     return playerArray
 };
