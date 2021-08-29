@@ -1,6 +1,7 @@
 const { Command } = require('discord.js-commando');
 
 const Utils = require("../../util/BotUtils")
+const EmoteUtils = require("../../util/EmotesUtils")
 const Interop = require("../../Plugins/MiscreatedInterop")
 
 
@@ -37,10 +38,11 @@ const genPlayerEntries = async (server, SteamWebApi) => {
                     if (profile.visibilityState === 2) { communityVisability = "Friends Only"; }
                     if (profile.visibilityState === 3) { communityVisability = "Public"; }
                 }
-                playerDetail += `**Steam Name** : [${profile.nickname}](${profile.url}) | **Profile** : ${communityVisability}`;
+                playerDetail += `> **SteamName**: [${profile.nickname}](${profile.url}) | **Profile**:${communityVisability} [[rep](https://steamrep.com/search?q=${player.steam})]`;
             }
         });
-        playerArray.push(`> **Name** : ${player.name} | **SteamID** : ${player.steam} [[Reputation](https://steamrep.com/search?q=${player.steam})]>  **Ping** : ${player.ping} | ${playerDetail}`)
+        const pingEmote = EmoteUtils.GetConnectionEmoteFromCurrentPing(player.ping)
+        playerArray.push(`> **Name**: ${player.name} | **SteamID**: ${player.steam} |  **ping**:${pingEmote} ${player.ping}\n${playerDetail}\n\n`)
     }
     return playerArray
 };
@@ -59,7 +61,7 @@ const genPlayerList = (server, SteamWebApi) => {
                         // parse out the returned array of player data into groups of 10,
                         // then join them into pages of players split by newlines and return
                         let playerList = [];
-                        const players = Utils.slicedArray(playerEntries, 2)
+                        const players = Utils.slicedArray(playerEntries, 10)
                         players.forEach((data) => {
                             playerList.push(data.join(` `))
                         })
