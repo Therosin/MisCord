@@ -34,13 +34,13 @@ const genPlayerEntries = async (server, SteamWebApi) => {
                 let communityVisability = "Unknown";
                 if (profile.visibilityState) {
                     if (profile.visibilityState === 1) { communityVisability = "Private"; }
-                    if (profile.visibilityState === 2) { communityVisability = "FriendsOnly"; }
+                    if (profile.visibilityState === 2) { communityVisability = "Friends Only"; }
                     if (profile.visibilityState === 3) { communityVisability = "Public"; }
                 }
-                playerDetail += `> **SteamName**: [${profile.nickname}](${profile.url}) | **Profile**:${communityVisability} [rep](https://steamrep.com/search?q=${player.steam})`;
+                playerDetail += `**Steam Name** : [${profile.nickname}](${profile.url}) | **Profile** : ${communityVisability}`;
             }
         });
-        playerArray.push(`> **Name**: ${player.name} | **SteamID**: ${player.steam} |  **ping**: ${player.ping}\n${playerDetail}`)
+        playerArray.push(`> **Name** : ${player.name} | **SteamID** : ${player.steam} [[Reputation](https://steamrep.com/search?q=${player.steam})]>  **Ping** : ${player.ping} | ${playerDetail}`)
     }
     return playerArray
 };
@@ -56,12 +56,12 @@ const genPlayerList = (server, SteamWebApi) => {
                 // generate playerInfo for each entry
                 await genPlayerEntries(server, SteamWebApi)
                     .then(playerEntries => {
-                        // parse out the returned array of player daata into groups of 10,
+                        // parse out the returned array of player data into groups of 10,
                         // then join them into pages of players split by newlines and return
                         let playerList = [];
                         const players = Utils.slicedArray(playerEntries, 2)
                         players.forEach((data) => {
-                            playerList.push(data.join(`\n`))
+                            playerList.push(data.join(` `))
                         })
                         fulfill(playerList)
                     })
