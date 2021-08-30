@@ -18,7 +18,7 @@
 
 const { Command } = require('discord.js-commando');
 
-module.exports = class CleverCommand extends Command {
+module.exports = class MisCordCommand extends Command {
 	constructor(client, info) {
 		super(client, info);
 

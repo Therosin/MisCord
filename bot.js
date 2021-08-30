@@ -15,30 +15,27 @@
 // You should have received a copy of the GNU General Public License
 // along with MisCord.  If not, see <http://www.gnu.org/licenses/>.
 
-
-
 /* eslint-disable no-console */
 
-// Bot Dependancies
+//
+// ───────────────────────────────────────────────────────── BOT DEPENDANCIES ─────
+// 	
 const MisCord = require('./Modules/Client');
-const MongoDBProvider = require('commando-provider-mongo').MongoDBProvider;
-const { connection } = require('mongoose')
-const db = connection
-
 // General
 const path = require('path');
 const oneLine = require('common-tags').oneLine;
 const Utils = require('./util/BotUtils')
-
-
-
 require('dotenv').config()
+
 let config = {
 	WEBHOOK_ID: process.env.WEBHOOK_ID,
 	WEBHOOK_TOKEN: process.env.WEBHOOK_TOKEN,
 	DISCORD_OWNER_ID: process.env.DISCORD_OWNER_ID,
 	DISCORD_PREFIX: process.env.DISCORD_PREFIX
 }
+// ────────────────────────────────────────────────────────────────────────────────
+
+
 
 /** 
  * Initialise the Bots main Client Object 
@@ -118,10 +115,12 @@ client
 			${guild ? `in guild ${guild.name} (${guild.id})` : 'globally'}.
 		`);
 	});
+// ────────────────────────────────────────────────────────────────────────────────
 
 
-
-// Start handling message events
+//
+// ──────────────────────────────────────────── START HANDLING MESSAGE EVENTS ─────
+//	
 client.on('message', async message => {
 	// Ignore our own Messages
 	if (message.author.id === client.user.id) {
@@ -138,6 +137,8 @@ client.on('message', async message => {
 		return;
 	}
 });
+// ────────────────────────────────────────────────────────────────────────────────
+
 
 client.registry
 	.registerGroup('general', 'General')

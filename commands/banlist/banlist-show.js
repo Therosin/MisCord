@@ -57,7 +57,7 @@ module.exports = class MisShowBanlistCommand extends Command {
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
                         return res
                     })
-                    || 
+                    ||
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_name: serverId }).then(res => {
                         return res
                     })
@@ -87,13 +87,16 @@ module.exports = class MisShowBanlistCommand extends Command {
 
                 })
                     //* Fetched ServerInfo
-                    .then(async banlist => {
+                    .then( async banlist => {
+                        let message_text = ""
                         if (banlist && Array.isArray(banlist)) {
-                            let message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT BANLIST :**\n`
+                            message_text = `<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **CURRENT BANLIST :**\n`
                             if (banlist.length >= 1) {
+
+                                let playerList = [];
                                 for (const steamId of banlist) {
                                     await this.client.SteamWebApi.getSteamProfile(steamId).then(profile => {
-                                        let playerDetail = `\n >  <:mark_no:827460913459625995>  **SteamId**: ${steamId} `
+                                        let playerDetail = `\n > <:mark_yes:827460929028489236> **SteamId**: ${steamId} `
                                         if (profile) {
                                             let communityVisability = "Unknown"
                                             if (profile.visibilityState) {
@@ -104,15 +107,20 @@ module.exports = class MisShowBanlistCommand extends Command {
                                             playerDetail += `\n >    **SteamName**: [${profile.nickname}](${profile.url}) | **SteamPrivacy**:${communityVisability}`
                                         }
                                         playerDetail += ` [ [rep](https://steamrep.com/search?q=${steamId}) ]\n`
-                                        message_text += playerDetail
+                                        playerList.push(playerDetail);
                                     })
                                 }
+                                let pages = [];
+                                let players = Utils.slicedArray(playerList, 10)
+                                players.forEach(page => { pages.push(page.join(`\n`)) })
+                                let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
+                                message.say(embed)
+                                return Utils.sendPagedEmbed(message, pages)
                             } else {
                                 message_text += "\n> NO PLAYERS IN BANLIST !"
+                                let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
+                                return message.say(embed)
                             }
-                            let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info")
-                            message.say(embed)
-
                         } else {
                             let embed = Utils.generateFailEmbed(`Couldnt parse response from server`, "Failed to fetch Server Info!")
                             message.say(embed)

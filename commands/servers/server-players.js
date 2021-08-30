@@ -1,8 +1,8 @@
 const { Command } = require('discord.js-commando');
 
 const Utils = require("../../util/BotUtils")
+const EmoteUtils = require("../../util/EmotesUtils")
 const Interop = require("../../Plugins/MiscreatedInterop")
-
 
 
 const CommandAllowRoles = ["Miscord-User", "miscord-user"]
@@ -26,35 +26,47 @@ function validPlayerArray(playersArray) {
  * @param {Object} SteamWebApi reference to client steamwebapi object
  */
 
-const genPlayerEntries = async (server, message_text, SteamWebApi) => {
+const genPlayerEntries = async (server, SteamWebApi) => {
+    let playerArray = []
     for (const player of server.playersArray) {
-        let playerDetail = `\n \n > **Name**: ${player.name} | **SteamID**: ${player.steam}[ [rep](https://steamrep.com/search?q=${player.steam}) ]\n > **ping**: ${player.ping} | `;
+        let playerDetail = "";
         await SteamWebApi.getSteamProfile(player.steam).then(profile => {
             if (profile) {
                 let communityVisability = "Unknown";
                 if (profile.visibilityState) {
                     if (profile.visibilityState === 1) { communityVisability = "Private"; }
-                    if (profile.visibilityState === 2) { communityVisability = "FriendsOnly"; }
+                    if (profile.visibilityState === 2) { communityVisability = "Friends Only"; }
                     if (profile.visibilityState === 3) { communityVisability = "Public"; }
                 }
-                playerDetail += `**SteamName**: [${profile.nickname}](${profile.url}) | **Profile**:${communityVisability}`;
+                playerDetail += `**SteamName** : [${profile.nickname}](${profile.url}) | **Profile** :${communityVisability}`;
             }
         });
-        message_text += playerDetail;
+        const pingEmote = EmoteUtils.GetConnectionEmoteFromCurrentPing(player.ping)
+        playerArray.push(`> **Name** : ${player.name} | **SteamID** : ${player.steam} [[rep](https://steamrep.com/search?q=${player.steam})]\n > **Ping** : ${pingEmote} ${player.ping} | ${playerDetail}\n \n`)
     }
-    return message_text
+    return playerArray
 };
 
-const genPlayerList = (server, message_text, SteamWebApi) => {
+const genPlayerList = (server, SteamWebApi) => {
     return new Promise(async (fulfill, reject) => {
-        if (!server || !message_text) {
-            // server and message_text are required
+        if (!server) {
+            // server is required
             reject("Invalid params")
         } else {
             // Check we have valid players
             if (validPlayerArray(server.playersArray)) {
-                await genPlayerEntries(server, message_text, SteamWebApi)
-                    .then(message_text => { fulfill(message_text) })
+                // generate playerInfo for each entry
+                await genPlayerEntries(server, SteamWebApi)
+                    .then(playerEntries => {
+                        // parse out the returned array of player data into groups of 10,
+                        // then join them into pages of players split by newlines and return
+                        let playerList = [];
+                        const players = Utils.slicedArray(playerEntries, 10)
+                        players.forEach((data) => {
+                            playerList.push(data.join(` `))
+                        })
+                        fulfill(playerList)
+                    })
                     .catch(err => { reject(err) });
             }
         }
@@ -112,7 +124,7 @@ module.exports = class MisServerInfoCommand extends Command {
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
                         return res
                     })
-                    || 
+                    ||
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_name: serverId }).then(res => {
                         return res
                     })
@@ -122,11 +134,12 @@ module.exports = class MisServerInfoCommand extends Command {
             }
         })
             .then(async result => {
+                let server
                 try {
                     const server_status = await new Promise(async (fulfill, reject) => {
                         if (result && result.server_id) {
                             try {
-                                let server = new Interop(result.server_ip, result.server_rconport, result.server_password);
+                                server = new Interop(result.server_ip, result.server_rconport, result.server_password);
                                 // ensure we have a valid server object.
                                 if (!server.server) { reject(`failed to create misrcon interface for server: ${serverId}`); }
 
@@ -149,10 +162,13 @@ module.exports = class MisServerInfoCommand extends Command {
 <:server:827461152904314911> **${server_status.name}**
 
 <:antenna:827461128971747348>  __Players online__  : ${server_status.players}`;
-                        return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {
+                        return genPlayerList(server_status, this.client.SteamWebApi).then(playerList => {
 
-                            let embed = Utils.generateSuccessEmbed(message_text_1, "Success fetching Server Info");
+                            let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info");
                             message.say(embed);
+
+                            if (this.client.isDebugBuild) { console.log(`Sending Paged Embed with data: ${playerList}`); };
+                            return Utils.sendPagedEmbed(message, playerList)
                         });
                     } else {
                         let embed_1 = Utils.generateFailEmbed(`Couldnt parse response from server`, "Failed to fetch Server Info!");

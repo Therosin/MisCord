@@ -43,20 +43,27 @@ module.exports = class MisServerListCommand extends Command {
             }
         })
             .then(data => { // Verify we got some servers back from the db
-                let embed
                 if (data == undefined || data.length < 1) { // We recieved no Servers. show a message hinting to add some incase miscords a fresh invite.
-                    embed = Utils.generateFailEmbed("No Configured servers", "No Servers", "no servers have been configured, add some with server-add")
-                } else {
+                    let embed = Utils.generateFailEmbed("No Configured servers", "No Servers", "no servers have been configured, add some with server-add")
+                    message.say(embed)
+                }
+                else {
                     // try to build a list out of the returned servers and send them back in a nice embed
                     let text = "<:svaltek:827467970707062834>\n\n<:antenna:827461128971747348> **REGISTERED SERVERS**"
+                    let serverList = [];
                     data.forEach(server => {
                         let line = `\n \n > <:server:827461152904314911> [**Name**]: ${server.server_name} | [**id**]: ${server.server_id}\n > [**hostname/ip**]: ${server.server_ip}\n > [**gameport**]: ${server.server_gameport} | [**rconport**]: ${server.server_rconport}`
-                        text = text + line
+                        serverList.push(line)
                     });
-
-                    embed = Utils.generateSuccessEmbed(text, "Server List")
+                    let pages = [];
+                    serverList = Utils.slicedArray(serverList, 5)
+                    serverList.forEach(page => {
+                        pages.push(page.join(`\n`))
+                    })
+                    let embed = Utils.generateSuccessEmbed(text, "Success fetching Server Info");
+                    message.say(embed);
+                    return Utils.sendPagedEmbed(message, pages)
                 }
-                message.say(embed)
             })
 
             .catch(err => { // Something went wrong . just return the error directly for bug reporting.

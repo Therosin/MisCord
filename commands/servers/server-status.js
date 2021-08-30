@@ -8,38 +8,6 @@ const Interop = require("../../Plugins/MiscreatedInterop")
 const CommandAllowRoles = ["Miscord-User", "miscord-user"]
 */
 
-/**
- * Check we have a Valid array of players
- * @param {array} playersArray 
- */
-function validPlayerArray(playersArray) {
-    if (playersArray != undefined) {
-        //TODO: We should realy check we actualy have players, not just that we jave a valid array
-        return (playersArray && Array.isArray(playersArray))
-    }
-    return false
-}
-
-const genPlayerEntries = async (message_text) => {
-    return message_text
-};
-
-const genPlayerList = (server, message_text, SteamWebApi) => {
-    return new Promise(async (fulfill, reject) => {
-        if (!server || !message_text) {
-            // server and message_text are required
-            reject("Invalid params")
-        } else {
-            // Check we have valid players
-            if (validPlayerArray(server.playersArray)) {
-                await genPlayerEntries(message_text)
-                    .then(message_text => { fulfill(message_text) })
-                    .catch(err => { reject(err) });
-            }
-        }
-    })
-};
-
 module.exports = class MisServerInfoCommand extends Command {
     constructor(client) {
         super(client, {
@@ -56,12 +24,10 @@ module.exports = class MisServerInfoCommand extends Command {
                     key: 'serverId',
                     prompt: 'enter the serverName or serverId to get info for',
                     type: 'string',
-                    /**
-                    validate: serverId => {
-                        if (serverId.length != 6) return 'invalid serverId';
-                        return true
-                    }
-                    */
+                    // validate: serverId => {
+                    //     if (serverId.length != 6) return 'invalid serverId';
+                    //     return true
+                    // }
                 },
             ]
         });
@@ -93,7 +59,7 @@ module.exports = class MisServerInfoCommand extends Command {
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
                         return res
                     })
-                    || 
+                    ||
                     await this.client.MiscreatedServers.getServer(message.guild.id, { server_name: serverId }).then(res => {
                         return res
                     })
@@ -140,13 +106,18 @@ module.exports = class MisServerInfoCommand extends Command {
 <:mouseMC:827461167026405386>  **Direct Connect :**
 > steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
 
+<:antenna:827461128971747348>  __Players__ : [online : ${server_status.players}]
+> Use server-players <serverId> to get the full list of online players
+
 <:svaltek:827467970707062834>
                         `;
-                        return genPlayerList(server_status, message_text, this.client.SteamWebApi).then(message_text_1 => {
 
-                            let embed = Utils.generateSuccessEmbed(message_text_1, "Success fetching Server Info");
-                            message.say(embed);
-                        });
+
+
+                        let embed = Utils.generateSuccessEmbed(message_text, "Success fetching Server Info");
+                        message.say(embed);
+
+
                     } else {
                         let embed_1 = Utils.generateFailEmbed(`Couldnt parse response from server`, "Failed to fetch Server Info!");
                         message.say(embed_1);
