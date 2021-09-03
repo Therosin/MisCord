@@ -107,7 +107,6 @@ module.exports = class MisServerInfoCommand extends Command {
 > steam://run/299740/connect/+connect%20${result.server_ip}%20${result.server_gameport}
 
 <:antenna:827461128971747348>  __Players__ : [online : ${server_status.players}]
-> Use server-players <serverId> to get the full list of online players
 
 <:svaltek:827467970707062834>
                         `;

@@ -99,12 +99,10 @@ module.exports = class MisServerRestartCommand extends Command {
                         }
 
                     });
-                    if (Interop_Result) {
                         //debugging
-                        if (this.client.isDebugBuild) { console.log(Interop_Result); };
-                        let embed = Utils.generateSuccessEmbed(Interop_Result, "restart requested!");
+                        if (this.client.isDebugBuild) { console.log(Interop_Result|| "No Response"); };
+                        let embed = Utils.generateSuccessEmbed("restart requested!", Interop_Result || "No Response from Server, this is Ok if the server actualy restarts as currently misrcon doesnt return any detectable response");
                         message.say(embed);
-                    }
                 } catch (restart_error) {
                     let fail_embed = Utils.generateFailEmbed(`${restart_error}`, "Error in Restart Request!");
                     message.say(fail_embed);
