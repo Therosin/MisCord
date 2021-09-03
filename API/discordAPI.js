@@ -19,7 +19,7 @@ const client = require('../Plugins/discord-oauth');
 const express = require('express');
 const router = express.Router();
 
-const verify = async function (req, res, next) {
+const verifyAuthState = async function (req, res, next) {
     if (req.cookies['user-key']) {
         try {
             const keyValidity = client.checkValidity(req.cookies['user-key']);
@@ -44,10 +44,11 @@ const verify = async function (req, res, next) {
     }
 }
 
-router.get('/', verify, async (req, res) => {
+router.get('/', verifyAuthState, async (req, res) => {
     console.info('Request recieved')
     const user = await client.users.fetch(req.cookies['user-key']);
-    res.render('discord/user', { title: 'Disco-OAuth User', user });
+    const data = { user }
+    res.render('discord/user', { title: 'Disco-OAuth User', data });
 });
 
 router.get('/login', async (req, res) => {
@@ -56,23 +57,30 @@ router.get('/login', async (req, res) => {
             const userKey = await client.getAccess(req.query.code).catch(console.error);
             res.cookie('user-state', 'deleted', { maxAge: -1 });
             res.cookie('user-key', userKey);
-            res.redirect('/');
+            res.redirect('/discord');
         } else {
-            res.send('States do not match. Nice try hackerman!');
+            res.send('States do not match. Nice try!');
         }
     } else {
-        res.send('Invalid login request.');
+        const { link, state } = client.auth;
+        res.cookie('user-state', state);
+        res.render('discord/login',{ pageTitle: 'Disco-OAuth', link });
     }
 });
 
-router.get('/logout', verify, (req, res) => {
+router.get('/logout', verifyAuthState, (req, res) => {
     res.cookie('user-key', 'deleted', { maxAge: -1 });
-    res.redirect('/');
+    res.redirect('/discord');
 });
 
-router.get('/guilds', verify, async (req, res) => {
+router.get('/guilds', verifyAuthState, async (req, res) => {
+    const user = await client.users.fetch(req.cookies['user-key']);
     const guilds = await client.guilds.fetch(req.cookies['user-key'], true);
-    res.render('discord/guilds', { title: 'Disco-OAuth Guilds', guilds })
+    const data = {
+        user,
+        guilds
+    }
+    res.render('discord/guilds', { title: 'Disco-OAuth Guilds', data })
 });
 
 module.exports = router;

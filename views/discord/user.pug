@@ -1,6 +1,15 @@
 extends ../layout
 
+block main-menu.links 
+    li.nav-item.active
+        a.nav-link(href='#') Home
+    li.nav-item
+        a.nav-link(href='/Commands') Commands
+
 block content
     #content
-    h1 USER!
-    p= JSON.stringify(user)
+    if (data && data.user)
+        h3 Welcome!
+        p= JSON.stringify(data.user)
+    else
+        h3 Not Logged In
