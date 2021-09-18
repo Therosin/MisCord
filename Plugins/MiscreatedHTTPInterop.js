@@ -19,52 +19,83 @@ module.exports = class MiscreatedInterop {
         // Create ApiObject
         this.server = new axios.create({
             baseURL: `http://${server_ip}:${server_rconport}`,
-            timeout: 1000,
+            timeout: 2500,
             headers: { 'X-ClientId': 'MisCord_HTTPInterop_v0.1alpha' }
         });
     }
 
     getData(endpoint, params, tryAuth) {
         let param_payload = ""
-        if (params == null) {
-            if (tryAuth) { params = { "authkey": this.apiKey} }
-        }
+        params = params || {}
+        if (tryAuth) { params.auth_key = this.apiKey };
         let paramJSON = JSON.stringify(params);
-        if (paramJSON != null) {
-            param_payload = "?" + Util.hexEncode(paramJSON)
-        }
-
-        return new Promise(async (resolve,reject) => {
-            response = this.server.get(`${endpoint}${param_payload}`, {
+        if (paramJSON != {} || null) { param_payload = "?" + Util.hexEncode(paramJSON) };
+        return new Promise(async (resolve, reject) => {
+            const response = await this.server.get(`${endpoint}${param_payload}`, {
                 transformResponse: [function (data) {
-                    return JSON.parse(data);
+                    const server_response = JSON.parse(data);
+                    if (!server_response && server_response.status) { return reject(`Unknown Response From API`) }
+                   return server_response.data || server_response
                 }]
             })
-                .catch(function (error) {
-                    if (error.response) {
-                        // server responded with a status code
-                        console.log(error.response.data);
-                        console.log(error.response.status);
-                        console.log(error.response.headers);
-                    } else if (error.request) {
-                        // request was made but no response
-                        console.log(error.request);
-                    } else {
-                        // setting up the request triggered an Error
-                        console.log('Error', error.message);
-                    }
-                    console.log(error.config);
-                    return reject(error)
-                });
-
-            resolve(response)
+            let data = response.data || response
+            resolve(data.result || data)
         })
     }
 
     /**
-     * get this Servers Status
-     */
+    ** fetch this Servers Status
+     * @returns {Promise} (response) => { }
+    */
     async getStatus() {
         return await this.getData("server")
+    }
+
+    /**
+    ** fetch current player locations 
+     * @param {steamId} player_steam64Id
+     * @returns {Promise} (response) => { }
+    */
+    async getPlayerLocations(player) {
+        let params = {}
+        if (player != null) { params.player = player };
+        return await this.getData('locationInterop/locations/players', params, true)
+    }
+
+    /**
+    ** fetch current player base locations
+     * @param {steamId} player_steam64Id
+     * @returns {Promise} (response) => { }
+    */
+    async getBaseLocations(player) {
+        let params = {}
+        if (player) { params.player = player };
+        return await this.getData('locationInterop/locations/bases', params, true)
+    }
+    /**
+    ** fetch current airdrop locations
+     * @returns {Promise} (response) => { }
+    */
+    async getAirdropLocations() {
+        return await this.getData('locationInterop/locations/air-drops', {}, true)
+    }
+
+    /**
+    ** fetch current planeCrash locations
+     * @returns {Promise} (response) => { }
+    */
+    async getPlaneCrashLocations() {
+        return await this.getData('locationInterop/locations/air-crash', {}, true)
+    }
+
+    /**
+    ** fetch current player tent locations
+     * @param {steamId} player_steam64Id
+     * @returns {Promise} (response) => { }
+    */
+    async getTentLocations(player) {
+        let params = {}
+        if (player) { params.player = player };
+        return await this.getData('locationInterop/locations/players', params, true)
     }
 }
