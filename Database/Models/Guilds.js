@@ -21,11 +21,7 @@ const { Schema, model } = require('mongoose');
 
 
 const Guilds = new Schema({
-    id: String,
-    prefix: {
-        default: 'm>',
-        type: String
-    }
+    playerIndex: String,
 });
 
 module.exports = model('Guilds', Guilds,"Guilds")
