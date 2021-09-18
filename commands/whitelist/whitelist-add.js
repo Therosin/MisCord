@@ -1,10 +1,5 @@
-const { Command } = require('discord.js-commando');
-
+const Command = require("../../Modules/Command");
 const Utils = require("../../util/BotUtils")
-const Interop = require("../../Plugins/MiscreatedInterop");
-
-
-const CommandAllowRoles = ["Miscord-User", "miscord-user"]
 
 
 module.exports = class MisAddWhitelistCommand extends Command {
@@ -33,82 +28,58 @@ module.exports = class MisAddWhitelistCommand extends Command {
                     prompt: 'enter the steam64Id to whitelist',
                     type: 'string',
                 }
-            ]
+            ],
+            protectedCommand: true,
+            CommandAllowedRoles: ["Miscord-User", "miscord-user"],
         });
     }
 
-
-    hasPermission(msg) {
-        if (this.client.isOwner(msg.author)) {
-            return true
-        };
-
-        if (msg.member.roles.cache.some(r => CommandAllowRoles.includes(r.name))) {
-            return true
-        } else {
-            return "You do not Have Permission to Use this Command"
-        }
-    }
-
     async run(message, args) {
-        message.delete();
-        let serverId = args.serverId
-        let steamId = args.steamId
-        if (!serverId) { return message.say("You must specify a serverId to get info for.") }
+        //Needed Vars
+        const
+            serverId = args.serverId,
+            steamId = args.steamId,
+            guildId = message.guild.id;
 
-        return new Promise(async (fulfill, reject) => {
-
-            try {
-                fulfill(
-                    await this.client.MiscreatedServers.getServer(message.guild.id, { server_id: serverId }).then(res => {
-                        return res
-                    })
-                )
-            } catch (err) {
-                reject(err)
-            }
-        })
-            .then(result => {
-
+        //fetch server
+        return await this.getServerforGuild(guildId, serverId)
+            .then(async server => {
                 //! Server with id `serverId` found
-                return new Promise(async (fulfill, reject) => {
-                    if (result && result.server_id) {
-                        try {
-                            let server = new Interop(result.server_ip, result.server_rconport, result.server_password)
-                            // ensure we have a valid server object.
-                            if (!server.server) { reject(`failed to create misrcon interface for server: ${serverId}`) }
+                server.whitelistPlayer(steamId,this.client.isDebugBuild)
+                    .then((whitelist_added, result) => {
+                        let embed
+                        if (this.client.isDebugBuild) {
+                            console.log({
+                                'serverId': serverId,
+                                'steamId': steamId,
+                                'guildId': guildId,
+                                'whitelist_added': whitelist_added,
+                                'result': result
+                            });
+                        };
 
-                            fulfill(await server.whitelistPlayer(steamId))
-                        } catch (err) {
-                            reject(err)
+                        if (whitelist_added) {
+                            embed = Utils.generateSuccessEmbed(result, "Edit Whitelist: Success!");
+                            // you can edit embed properties here. add/remove fields change colour etc...
+                        } else {
+                            embed = Utils.generateInfoEmbed(result, "Edit Whitelist: Failed!");
                         }
-                    } else {
-                        if (this.client.isDebugBuild) { console.log(result) };
-                        reject(`Invalid ServerData Please remove and Re add server: ${serverId} \n _this shouldnt happen if you keep seeing this message please report it as a bug_`)
-                    }
-
-                })
-                    //* Fetched ServerInfo
-                    .then(result => {
-                        if (result) {
-                            //debugging
-                            if (this.client.isDebugBuild) { console.log(result) };
-                            let embed = Utils.generateSuccessEmbed(result, "add whitelist success!")
-                            message.say(embed)
-                        }
+                        message.say(embed);
 
                     })
-                    //! Couldnt fetch Server Info
                     .catch(err => {
-                        let embed = Utils.generateFailEmbed(`Error fetching server info ${err}`, "Failed to fetch Server Info!")
-                        message.say(embed)
-                    })
 
+                        let embed = Utils.generateFailEmbed(`Error: ${err}`, "Failed!");
+                        message.say(embed);
+
+                    })
             })
             .catch(err => {
+
                 //! Server with id `serverId` Not found
-                let embed = Utils.generateFailEmbed(`Server not found or Invalid serverId specified: ${err}`, "Failed!")
+                let embed = Utils.generateFailEmbed(`Server not found or Invalid serverId specified: ${err}`, "Error")
                 message.say(embed)
+
             })
     }
 };
