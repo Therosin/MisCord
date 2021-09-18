@@ -23,14 +23,12 @@ const { WebhookClient } = require('discord.js');
 const winston = require('winston');
 const MiscreatedServers = require('../Plugins/MiscreatedServers');
 const SteamWebApi = require('../Plugins/SteamWebApi')
+const UserManager = require('../Plugins/UserManager')
 const MongoDatabase = require('../Database/MongoDB');
-/**
- * Create an Instance of the MiscreatedTools plugin for the bot to use
- */
 
 
 module.exports = class Miscord extends CommandoClient {
-	constructor(options,config) {
+	constructor(options, config) {
 		super(options);
 
 		this.isDebugBuild = false
@@ -43,6 +41,7 @@ module.exports = class Miscord extends CommandoClient {
 		});
 		this.webhook = new WebhookClient(config.WEBHOOK_ID, config.WEBHOOK_TOKEN, { disableEveryone: true });
 		this.db = new MongoDatabase(this)
+		this.UserManager = new UserManager(this)
 		this.MiscreatedServers = new MiscreatedServers(this)
 		this.SteamWebApi = new SteamWebApi(this)
 	}

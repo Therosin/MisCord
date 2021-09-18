@@ -29,9 +29,9 @@ const MONGOCFG = {
     PASSWORD: process.env.MONGO_PASSWORD
 }
 
-const GuildController = require('./Controllers/Guild.js')
-const ServerController = require('./Controllers/Server.js')
-
+const GuildController = require('./Controllers/Guild')
+const ServerController = require('./Controllers/Server')
+const UserController = require('./Controllers/User')
 const MongoDBProvider = require('commando-provider-mongo').MongoDBProvider;
 
 module.exports = class MongoDatabase {
@@ -54,6 +54,7 @@ module.exports = class MongoDatabase {
             ).catch(client.logger.error);
             this.GuildController = new GuildController(client)
             this.ServerController = new ServerController(client)
+            this.UserController = new UserController(client)
         }).catch(err => {
             this.client.logger.error(`[DATABASE] Connection Failed [MongoDB Connect]\n Reason: ${err}`)
         })
