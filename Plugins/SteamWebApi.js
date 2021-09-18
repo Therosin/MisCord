@@ -4,8 +4,6 @@
 // ────────────────────────────────────────────────────────────────────────
 // Handles making requests to SteamWebapi for getting player Profile info
 
-"use strict"
-
 const SteamAPI = require("steamapi")
 require('dotenv').config()
 

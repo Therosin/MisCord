@@ -4,8 +4,6 @@
 // ──────────────────────────────────────────────────────────────────────────────────────
 // Handles interaction Between MisCord and Miscreated Server Instances over HTTP or RCON
 
-"use strict";
-
 //const axios = require(axios)
 const axios = require("axios");
 const Util = require("../util/BotUtils")

@@ -4,7 +4,6 @@
 // ──────────────────────────────────────────────────────────────────────────────────────
 // Handles interaction Between MisCord and Miscreated Server Instances over RCON
 
-"use strict";
 
 
 const misrcon = require("node-misrcon")
