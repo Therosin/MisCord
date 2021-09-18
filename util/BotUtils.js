@@ -43,26 +43,13 @@ module.exports = class BotUtils {
 	}
 
 	static hexEncode(str) {
-		var hex, i;
-
-		var result = "";
-		for (i = 0; i < str.length; i++) {
-			hex = str.charCodeAt(i).toString(16);
-			result += ("000" + hex).slice(-4);
-		}
-
-		return result
+		const bufStr = Buffer.from(str, 'utf8');
+		return bufStr.toString('hex');
 	}
 
 	static hexDecode(str) {
-		var j;
-		var hexes = str.match(/.{1,4}/g) || [];
-		var back = "";
-		for (j = 0; j < hexes.length; j++) {
-			back += String.fromCharCode(parseInt(hexes[j], 16));
-		}
-
-		return back;
+		const bufStr = Buffer.from(str, 'hex');
+		return bufStr.toString();
 	}
 
 	static StringPadding(pad, str, padLeft) {
