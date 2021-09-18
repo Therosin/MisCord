@@ -146,6 +146,7 @@ client.registry
 	.registerGroup('whitelist', 'Whitelist')
 	.registerGroup('banlist', 'Banlist')
 	.registerGroup('util', 'Utils')
+	.registerGroup('locations', 'Locations')
 	.registerDefaults()
 	.registerTypesIn(path.join(__dirname, 'types'))
 	.registerCommandsIn(path.join(__dirname, 'commands'));
