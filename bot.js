@@ -146,6 +146,7 @@ client.registry
 	.registerGroup('whitelist', 'Whitelist')
 	.registerGroup('banlist', 'Banlist')
 	.registerGroup('util', 'Utils')
+	.registerGroup('player', 'Player')
 	.registerGroup('locations', 'Locations')
 	.registerDefaults()
 	.registerTypesIn(path.join(__dirname, 'types'))
