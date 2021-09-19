@@ -42,6 +42,11 @@ module.exports = class BotUtils {
 		return Math.floor(Math.random() * (high - low + 1) + low);
 	}
 
+	static randomString(len) {
+		let buffer = Buffer.alloc(len)
+		return crypto.randomFillSync(buffer).toString('hex')
+	}
+
 	static hexEncode(str) {
 		const bufStr = Buffer.from(str, 'utf8');
 		return bufStr.toString('hex');
