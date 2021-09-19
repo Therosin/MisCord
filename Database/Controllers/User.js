@@ -23,14 +23,12 @@ module.exports = class UserController {
         this.client = client;
     }
 
-    addUser(guild, User) {
+    addUser(User) {
         return new Promise(async (resolve, reject) => {
-            if (!guild) { reject("missing guild") }
             const doc = new UserModel({
-                guild: guild,
-                User_id: User.id,
                 User_discordId: User.discordId,
                 User_steamId: User.steamId,
+                User_connectId: User.connectId
             })
 
             await doc.save()
@@ -48,21 +46,9 @@ module.exports = class UserController {
         })
     }
 
-    getUsers(guild) {
+    getUser(User_data) {
         return new Promise(async (resolve, reject) => {
-            if (!guild) { reject("missing guild") }
-            const Users = await UserModel.find({ guild: guild })
-            if (!Users) {
-                reject(`no managed users for guild: ${guild}`)
-            } else {
-                resolve(Users)
-            }
-        })
-    }
-    getUser(guild, User_data) {
-        return new Promise(async (resolve, reject) => {
-            if (!guild) { reject("missing guild") }
-            const User = await UserModel.findOne({ guild: guild, ...User_data })
+            const User = await UserModel.findOne({ ...User_data })
             if (!User) {
                 reject("Unknown User")
             } else {
@@ -71,22 +57,21 @@ module.exports = class UserController {
         })
     }
 
-    updateUser(guild, userId, User_data) {
+    updateUser(userId, User_data) {
         return new Promise(async (resolve, reject) => {
-            if (!guild) { reject("missing guild") }
+            if (!userId) { reject("missing userId") }
             try {
-                resolve(await UserModel.findOneAndUpdate({ User_id: userId }, User_data, { new: true }));
+                resolve(await UserModel.findOneAndUpdate({ _id: userId }, User_data, { new: true }));
             } catch (error) {
                 reject(err)
             }
         })
     }
 
-    delUser(guild, User_id) {
+    delUser(id) {
         return new Promise(async (resolve, reject) => {
-            if (!guild) { reject("missing guild") }
-            if (!User_id) { reject("missing User_id") }
-            const User = await UserModel.findOne({ User_id: User_id })
+            if (!id) { reject("missing id") }
+            const User = await UserModel.findOne({ _id: id })
             if (!User) {
                 reject("that User does not exist")
             } else {

@@ -15,6 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with MisCord.  If not, see <http://www.gnu.org/licenses/>.
 
+const Utils = require("../util/BotUtils")
 
 module.exports = class UserManager {
     constructor(client) {
@@ -22,47 +23,25 @@ module.exports = class UserManager {
     }
 
     /**
-     * find a specific User by guildId and User Object
-     * @param {string} guild guildId of guild to fetch a User for
-     * @param {object} User and object defining properties to filter by
+     * find a specific User by matched User data
+     * @param {object} User object defining properties to filter by
      */
-    getUser(guild, User) {
+    getUser(User) {
         return new Promise(async (fulfill, reject) => {
             try {
 
                 // find User based on guild + provided User data
-                let user = await this.client.db.UserController.getUser(guild, User)
+                let user = await this.client.db.UserController.getUser(User)
                 if (user) {
                     fulfill(user)
                 } else {
-                    let userId = await this.client.db.UserController.addUser(guild, User)
-                    if (userId) {
-                        fulfill(await this.client.db.UserController.getUser(guild, User))
-                    }
+                    reject(`Unknown User`)
                 }
 
             } catch (err) {
                 reject(err);
             }
-        });
-    }
-
-    /**
-     * fetch all Users belonging to a guild
-     * @param {string} guild guildId to fetch Users for
-     */
-    getUsers(guild) {
-        return new Promise(async (fulfill, reject) => {
-            try {
-
-                // find all Users based on guild
-                fulfill(
-                    await this.client.db.UserController.getUsers(guild)
-                )
-            } catch (err) {
-                reject(err);
-            }
-        });
+        })
 
     }
 
@@ -71,46 +50,44 @@ module.exports = class UserManager {
      * @param {string} guild 
      * @param {object} User {discordId,steamId}
      */
-    addUser(guild, User) {
+    addUser(User) {
         let User_data = {
-            User_discordId: User.discordId,
-            User_steamId: User.steamId
+            discordId: User.discordId,
+            steamId: User.steamId,
+            connectId: null
         }
         return new Promise(async (fulfill, reject) => {
-            this.getUser(guild, User_data)
-                .then(async found => {
-                    if (found) {
-                        reject("User exists")
-                    } else {
-                        try {
-                            User.User_connectId = randomBytes(7).toString('hex')
-                            fulfill(await this.client.db.UserController.addUser(guild, User))
-                        } catch (err) {
-                            console.error(`failed to create User: ${err}`)
-                            reject(err);
-                        }
-                    }
-                });
+            let UserId
+            try {
+                User_data.connectId = Utils.randomString(7)
+                UserId = this.client.db.UserController.addUser(User_data)
+                if (UserId) {
+                    fulfill(true, UserId)
+                }
+            } catch (err) {
+                console.error(`failed to create User: ${err}`)
+                reject(err);
+            }
         })
     }
 
+
     /**
      * delete a User by guildId and UserId
-     * @param {string} guild guildId of guild that owns the User
      * @param {string} UserId UserId of the User to delete
      */
-    delUser(guild, UserId) {
-        let User = {
-            User_id: UserId
+    delUser(UserId) {
+        const User = {
+            id: UserId
         }
         return new Promise(async (fulfill, reject) => {
-            this.getUser(guild, User)
+            this.getUser(User)
                 .then(async found => {
-                    if (found == undefined || found.User_id !== UserId) {
+                    if (found == undefined || found._id !== UserId) {
                         reject("User not found")
                     }
                     try {
-                        fulfill(await this.client.db.UserController.delUser(guild, UserId))
+                        fulfill(await this.client.db.UserController.delUser(UserId))
                     } catch (err) {
                         reject(err);
                     }
@@ -124,18 +101,15 @@ module.exports = class UserManager {
      * @param {string} UserId UserId of the User to update
      * @param {object} UserData user Properties to update
      */
-    updateUser(guild, UserId, UserData) {
-        let User = {
-            User_id: UserId
-        }
+    updateUser(UserId, UserData) {
         return new Promise(async (fulfill, reject) => {
-            this.getUser(guild, User)
+            this.getUser(UserData)
                 .then(async found => {
                     if (found == undefined || found.User_id !== UserId) {
                         reject("User not found")
                     }
                     try {
-                        fulfill(await this.client.db.UserController.updateUser(guild, UserId, UserData))
+                        fulfill(await this.client.db.UserController.updateUser(UserId, UserData))
                     } catch (err) {
                         reject(err);
                     }

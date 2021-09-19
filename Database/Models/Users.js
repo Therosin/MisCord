@@ -22,10 +22,10 @@ const { Schema, model } = require('mongoose');
 
 
 const Users = new Schema({
-  guild: String,
   User_id: String,
   User_steamId: String,
   User_discordId: String,
+  User_connectId: String,
 });
 
 module.exports = model('Users', Users, "Users")
