@@ -15,9 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with MisCord.  If not, see <http://www.gnu.org/licenses/>.
 
-const client = require('../Plugins/discord-oauth');
 const express = require('express');
 const router = express.Router();
+
+const client = require('../Plugins/discord-oauth');
 
 const verifyAuthState = async function (req, res, next) {
     if (req.cookies['user-key']) {

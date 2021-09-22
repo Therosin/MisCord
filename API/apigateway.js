@@ -30,7 +30,7 @@ router.use(function timeLog (req, res, next) {
 
 // api gateway
 router.get('/', function (req, res) {
-  res.render('./gateway/index', {})
+  res.render('gateway/index', {})
 })
 
 router.get('/:action', function (req, res) {
