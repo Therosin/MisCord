@@ -4,7 +4,7 @@
 // ──────────────────────────────────────────────────────────────────────────────────────
 // Handles interaction Between MisCord and Miscreated Server Instances over RCON
 
-
+const { promiseRetry } = require("../util/BotUtils")
 
 const misrcon = require("node-misrcon")
 module.exports = class MiscreatedInterop {
@@ -20,10 +20,31 @@ module.exports = class MiscreatedInterop {
     }
 
     /**
-     * get this Servers Status
+     * 
+     * @param {Number} nTries incase of Error 503 retry this many times default 3
+     * @returns {Promise}
      */
-    async getStatus() {
-        return await this.server.getStatus();
+    async getStatus(nTries) {
+        const request = async () => {
+            return await this.server.getStatus()
+                .then((result) => {
+                        console.log(`getStatus() >> We got All the Datas, Success fetching server Status`)
+                        console.log(result);
+                        return Promise.resolve(result)
+                })
+                .catch((err) => {
+                    if (err.response && err.response.status == 503) {
+                        const msg = `getStatus() >> ${err.response.statusText}, retrying its just in use....`
+                        console.warn(msg)
+                        return Promise.reject(Error(msg))
+                    } else {
+                    console.log(`getStatus() >> failed fetching server Status... Boooo!`)
+                    console.log(err);
+                    return Promise.reject(err)
+                    }
+                })
+        }
+        return promiseRetry(request,nTries||3)
     }
 
     /**
@@ -32,7 +53,6 @@ module.exports = class MiscreatedInterop {
     async getStats() {
         return await this.server.getStats();
     }
-
 
     //
     // ───────────────────────────────────────────────────── WHITELIST MANAGEMENT ─────

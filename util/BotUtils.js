@@ -29,13 +29,21 @@ const no = ['no', 'n', 'nah', 'nope', 'nop'];
 
 module.exports = class BotUtils {
 
-	static getAllGuildsCount = async (client) => {
-		// get guild collection size from all the shards
-		const req = await client.shard.fetchClientValues('guilds.cache.size');
-
-		// return the added value
-		return req.reduce((p, n) => p + n, 0);
-	}
+	/**
+	 * 
+	 * @param {Promise} promise Promise to retry
+	 * @param {Number} nTimes 
+	 * @returns {Promise}
+	 */
+	static async promiseRetry(promise, nTimes) {
+		for (let i = 0; i < nTimes; i++) {
+		  try {
+			return await promise();
+		  } catch {}
+		}
+	  
+		throw new Error(`Failed retrying ${nTimes} times`);
+	  }
 
 	static randomInt(low, high) {
 		// eslint-disable-next-line no-mixed-operators
@@ -67,108 +75,10 @@ module.exports = class BotUtils {
 		}
 	}
 
-	static generateSuccessEmbed(message, title, description) {
-		return this.generateEmbed(message, title, description).setColor(0x8ed938);
+	static isBlankString(str) {
+		if (str === undefined) { return true }
+		return (!str || /^\s*$/.test(str));
 	}
-
-	static generateFailEmbed(message, title, description) {
-		return this.generateEmbed(message, title, description).setColor(0xec3c42);
-	}
-
-	static generateInfoEmbed(message, title, description) {
-		return this.generateEmbed(message, title, description).setColor(0x389ed9);
-	}
-
-	static generateEmbed(message, title, description) {
-		let embed = new MessageEmbed()
-			.addField(`__**${title}.**__`, `${message}`)
-		if (description != undefined) {
-			embed.addField("info:", `_ ${description}_`)
-		}
-		return embed
-	}
-
-	static sendPagedEmbed = (message, pages) => {
-		let page = 1;
-		const embed = new MessageEmbed()
-			.setColor(0xffffff) //sets color here
-			.setFooter(`Page ${page} of ${pages.length}`)
-			.setDescription(pages[page - 1])
-
-		message.channel.send(embed).then(msg => {
-			msg.react('⏪').then(r => {
-				msg.react('⏩');
-				//filters
-				const isBackwards = (reaction, user) => reaction.emoji.name === '⏪' && user.id === message.author.id;
-				const isForwards = (reaction, user) => reaction.emoji.name === '⏩' && user.id === message.author.id;
-
-				const backwards = msg.createReactionCollector(isBackwards);
-				const forwards = msg.createReactionCollector(isForwards);
-
-				backwards.on("collect", r => {
-					if (page === 1) return;
-					page--;
-					embed.setDescription(pages[page - 1]);
-					embed.setFooter(`Page ${page} of ${pages.length}`);
-					msg.edit(embed)
-				});
-
-				forwards.on("collect", r => {
-					if (page === pages.length) return;
-					page++;
-					embed.setDescription(pages[page - 1]);
-					embed.setFooter(`Page ${page} of ${pages.length}`);
-					msg.edit(embed)
-				});
-			});
-		});
-	}
-
-	/**
-	 *  SINGLE- LINE AWAITMESSAGE
-	 *  A simple way to grab a single reply, from the user that initiated
-	 *  the command.Useful to get "precisions" on certain things...
-	 *  USAGE
-	 *  const [response,deleted,err] = await client.awaitReply(msg, "Favourite Color?",true);
-	 *  if (!deleted){ console.error(`failed to delete response ${err}`)}
-	 *  msg.reply(`Oh, I really love ${response} too!`);
-	*/
-	static async awaitReply(msg, question, limit = 60000, deleteReply) {
-		const filter = m => m.author.id === msg.author.id;
-		let prompt = await msg.channel.send(question);
-		try {
-			const collected = await msg.channel.awaitMessages(filter, { max: 1, time: limit, errors: ["time"] });
-			const content = collected.first().content
-			if (deleteReply) {
-				collected.first().delete()
-				prompt.delete()
-			}
-			return content;
-		} catch (e) {
-			return false;
-		}
-	};
-
-	/**
-	 *  MESSAGE CLEAN FUNCTION
-	 *  "Clean" removes @everyone pings, as well as tokens, and makes code blocks
-	 *  escaped so they're shown more easily. As a bonus it resolves promises
-	 *  and stringifies objects!
-	 *  This is mostly only used by the Eval and Exec commands.
-	*/
-	static async message_clean(client, text) {
-		if (text && text.constructor.name == "Promise")
-			text = await text;
-		if (typeof text !== "string")
-			text = require("util").inspect(text, { depth: 1 });
-
-		text = text
-			.replace(/`/g, "`" + String.fromCharCode(8203))
-			.replace(/@/g, "@" + String.fromCharCode(8203))
-			.replace(client.token, "mfa.VkO_2G4Qv3T--NO--lWetW_tjND--TOKEN--QFTm6YGtzq9PH--4U--tG0");
-
-		return text;
-	};
 
 	/**
 	 * Returns an array sliced into arrays of a given size.
@@ -277,6 +187,35 @@ module.exports = class BotUtils {
 		return today;
 	}
 
+	static make_date(years, days, hours, minutes, seconds, milliseconds, timeZone) {
+		const date = new Date();
+		if (timeZone) date.setUTCHours(timeZone);
+		if (years != 0) { date.setYears(years) }
+		if (days != 0) { date.setYears(days) }
+		if (hours != 0) { date.setHours(0) }
+		if (minutes != 0) { date.setMinutes(0) }
+		if (seconds != 0) { date.setSeconds(0) }
+		if (milliseconds != 0) { date.setMilliseconds(0) }
+		return date
+	}
+
+	static unixTime(date) {
+		let the_date = date || (new Date())
+		return Math.round(the_date.getTime() / 1000)
+	}
+
+	static getAllGuildsCount = async (client) => {
+		// get guild collection size from all the shards
+		const req = await client.shard.fetchClientValues('guilds.cache.size');
+		// return the added value
+		return req.reduce((p, n) => p + n, 0);
+	}
+
+	//
+	// ──────────────────────────────────────────────────────────── MESSAGE UTILS ─────
+	//
+
+
 	static async awaitPlayers(msg, max, min, { time = 30000, dmCheck = false } = {}) {
 		const joined = [];
 		joined.push(msg.author.id);
@@ -318,4 +257,107 @@ module.exports = class BotUtils {
 		if (no.includes(choice)) return false;
 		return false;
 	}
+
+	static generateSuccessEmbed(message, title, description) {
+		return this.generateEmbed(message, title, description).setColor(0x8ed938);
+	}
+
+	static generateFailEmbed(message, title, description) {
+		return this.generateEmbed(message, title, description).setColor(0xec3c42);
+	}
+
+	static generateInfoEmbed(message, title, description) {
+		return this.generateEmbed(message, title, description).setColor(0x389ed9);
+	}
+
+	static generateEmbed(message, title, description) {
+		let embed = new MessageEmbed()
+			.addField(`__**${title}.**__`, `${message}`)
+		if (description != undefined) {
+			embed.addField("info:", `_ ${description}_`)
+		}
+		return embed
+	}
+
+	static sendPagedEmbed = (message, pages) => {
+		let page = 1;
+		const embed = new MessageEmbed()
+			.setColor(0xffffff) //sets color here
+			.setFooter(`Page ${page} of ${pages.length}`)
+			.setDescription(pages[page - 1])
+
+		message.channel.send(embed).then(msg => {
+			msg.react('⏪').then(r => {
+				msg.react('⏩');
+				//filters
+				const isBackwards = (reaction, user) => reaction.emoji.name === '⏪' && user.id === message.author.id;
+				const isForwards = (reaction, user) => reaction.emoji.name === '⏩' && user.id === message.author.id;
+
+				const backwards = msg.createReactionCollector(isBackwards);
+				const forwards = msg.createReactionCollector(isForwards);
+
+				backwards.on("collect", r => {
+					if (page === 1) return;
+					page--;
+					embed.setDescription(pages[page - 1]);
+					embed.setFooter(`Page ${page} of ${pages.length}`);
+					msg.edit(embed)
+				});
+
+				forwards.on("collect", r => {
+					if (page === pages.length) return;
+					page++;
+					embed.setDescription(pages[page - 1]);
+					embed.setFooter(`Page ${page} of ${pages.length}`);
+					msg.edit(embed)
+				});
+			});
+		});
+	}
+
+	/**
+	 *  SINGLE- LINE AWAITMESSAGE
+	 *  A simple way to grab a single reply, from the user that initiated
+	 *  the command.Useful to get "precisions" on certain things...
+	 *  USAGE
+	 *  const [response,deleted,err] = await client.awaitReply(msg, "Favourite Color?",true);
+	 *  if (!deleted){ console.error(`failed to delete response ${err}`)}
+	 *  msg.reply(`Oh, I really love ${response} too!`);
+	*/
+	static async awaitReply(msg, question, limit = 60000, deleteReply) {
+		const filter = m => m.author.id === msg.author.id;
+		let prompt = await msg.channel.send(question);
+		try {
+			const collected = await msg.channel.awaitMessages(filter, { max: 1, time: limit, errors: ["time"] });
+			const content = collected.first().content
+			if (deleteReply) {
+				collected.first().delete()
+				prompt.delete()
+			}
+			return content;
+		} catch (e) {
+			return false;
+		}
+	};
+
+	/**
+	 *  MESSAGE CLEAN FUNCTION
+	 *  "Clean" removes @everyone pings, as well as tokens, and makes code blocks
+	 *  escaped so they're shown more easily. As a bonus it resolves promises
+	 *  and stringifies objects!
+	 *  This is mostly only used by the Eval and Exec commands.
+	*/
+	static async message_clean(client, text) {
+		if (text && text.constructor.name == "Promise")
+			text = await text;
+		if (typeof text !== "string")
+			text = require("util").inspect(text, { depth: 1 });
+
+		text = text
+			.replace(/`/g, "`" + String.fromCharCode(8203))
+			.replace(/@/g, "@" + String.fromCharCode(8203))
+			.replace(client.token, "mfa.VkO_2G4Qv3T--NO--lWetW_tjND--TOKEN--QFTm6YGtzq9PH--4U--tG0");
+
+		return text;
+	};
 };

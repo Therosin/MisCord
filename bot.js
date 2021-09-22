@@ -24,7 +24,7 @@ const MisCord = require('./Modules/Client');
 // General
 const path = require('path');
 const oneLine = require('common-tags').oneLine;
-const Utils = require('./util/BotUtils')
+const { getAllGuildsCount } = require('./util/BotUtils')
 require('dotenv').config()
 
 let config = {
@@ -53,14 +53,14 @@ client
 	// Bot Online and waiting on Discord
 	.on('ready', () => {
 		// eslint-disable-next-line no-process-env
-		if (process.env.ISBUILD === 'True') {
+		if (process.env.MISCORD_BUILD === 'true') {
 			console.log('Build Success...! Exiting...');
 			process.exit(0);
 		}
 		client.logger.info(`[READY] Logged in as ${client.user.tag}! ID: ${client.user.id}`);
 		client.setInterval(() => {
 			client.MiscreatedServers.getServerCount().then((serverCount) => {
-				Utils.getAllGuildsCount(client).then((guildCount) => {
+				getAllGuildsCount(client).then((guildCount) => {
 					client.user.setPresence({
 						status: 'idle',
 						activity: {

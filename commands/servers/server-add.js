@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const Utils = require("../../util/BotUtils")
+const { isBlankString, awaitReply } = require('../../util/BotUtils');
 
 const CommandAllowRoles = ["Miscord-User", "miscord-user"]
 
@@ -70,14 +70,100 @@ module.exports = class MisAddServerCommand extends Command {
 
 
 	async run(message, args) {
+		let user_canceled = false
+		let server_info = {
+			"ip": args.ip,
+			"name": args.name,
+			"gameport": args.gameport,
+			"rconport": args.rconport,
+			"password": args.password,
+			"authkey": args.authkey,
+		}
+
+		const CollectServerData = async () => {
+			let ip_response
+			if (isBlankString(server_info.ip)) {
+				const ip_prompt = 'please enter the servers ip or hostname, eg:server1';
+				ip_response = await awaitReply(message, ip_prompt, 40000, true)
+			}
+			if (ip_response === 'cancel') {
+				user_canceled = true
+				return server_info, user_canceled
+			}
+			server_info.ip = ip_response
+
+			let name_response
+			if (isBlankString(server_info.name)) {
+				const name_prompt = 'please enter the servers name (for your own reference, spaces ARE allowed but you  must wrap the name in doublequotes), eg:server1';
+				name_response = await awaitReply(message, name_prompt, 40000, true)
+			}
+			if (name_response === 'cancel') {
+				user_canceled = true
+				return server_info, user_canceled
+			}
+			server_info.name = name_response
+
+			let gameport_response
+			if (isBlankString(server_info.gameport)) {
+				const gameport_prompt = 'please enter the servers gameport, eg:64090';
+				gameport_response = await awaitReply(message, gameport_prompt, 40000, true)
+			}
+			if (gameport_response === 'cancel') {
+				user_canceled = true
+				return server_info, user_canceled
+			}
+			server_info.gameport = gameport_response
+
+			let rconport_response
+			if (isBlankString(server_info.rconport)) {
+				const rconport_prompt = 'please enter the servers rconport, eg:64094';
+				rconport_response = await awaitReply(message, rconport_prompt, 40000, true)
+			}
+			if (rconport_response === 'cancel') {
+				user_canceled = true
+				return server_info, user_canceled
+			}
+			server_info.rconport = rconport_response
+
+			let password_response
+			if (isBlankString(server_info.password)) {
+				const password_prompt = 'please enter the servers rcon password';
+				password_response = await awaitReply(message, password_prompt, 40000, true)
+			}
+			if (password_response === 'cancel') {
+				user_canceled = true
+				return server_info, user_canceled
+			}
+			server_info.password = password_response
+
+			let authkey_response
+			if (isBlankString(server_info.authkey)) {
+				const authkey_prompt = 'please enter the servers authkey, eg:we1162e243ekose5o';
+				authkey_response = await awaitReply(message, authkey_prompt, 40000, true)
+			}
+			if (authkey_response === 'cancel') {
+				user_canceled = true
+				return server_info, user_canceled
+			}
+			server_info.authkey = authkey_response
+			return server_info, user_canceled
+		}
 
 
-		const client = this.client
+		const ValidServerData = () => {
+			let isValid = true
 
+			for (let [key, value] of Object.entries(server_info)) {
+				console.log(`add- server validation ${key} = ${value} `)
+				if (isBlankString(value)) {
+					console.log(`invalid option: ${key} `)
+					isValid = false
+				}
+			}
 
-		/**
-		 * Create a temporary `server` object for the entered parameters all are require
-		 */
+			return isValid
+		}
+
 		const Continue = (server) => {
 			const run = new Promise(async (fulfill, reject) => {
 				await client.MiscreatedServers.addServer(message.guild.id, server)
@@ -87,13 +173,13 @@ module.exports = class MisAddServerCommand extends Command {
 
 				.then(result => {
 					//! Server Created
-					let embed = Utils.generateSuccessEmbed(`Server added, ID: ${result}`, "Create Server, OK!!")
+					let embed = Utils.generateSuccessEmbed(`Server added, ID: ${result} `, "Create Server, OK!!")
 					message.say(embed)
 				})
 
 				.catch(err => {
 					//! Failed to Create server
-					let embed = Utils.generateFailEmbed(`Failed to add Server: ${err}`, "Create Server Failed!")
+					let embed = Utils.generateFailEmbed(`Failed to add Server: ${err} `, "Create Server Failed!")
 					message.say(embed)
 				})
 
@@ -105,56 +191,20 @@ module.exports = class MisAddServerCommand extends Command {
 			return run
 		}
 
-		const GenServerData = async (args) => {
-			let server = {}
-
-			let ip_response
-			if (args.ip === "") {
-				const ip_prompt = 'please enter the servers ip or hostname, eg:server1';
-				ip_response = await Utils.awaitReply(message, ip_prompt, 40000, true)
+		while (user_canceled === false) {
+			server_info, user_canceled = await CollectServerData()
+			if (user_canceled === true) {
+				message.say("Ok, Cancelled.")
+				setTimeout(() => {
+					message.delete()
+				}, 1600);
+				break;
+			} else {
+				if (ValidServerData(server_info)) {
+					Continue(server_info)
+					break;
+				}
 			}
-			server.ip = ip_response || args.ip
-
-			let name_response
-			if (args.name === "") {
-				const name_prompt = 'please enter the servers name (for your own reference, spaces ARE allowed but you  must wrap the name in doublequotes), eg:server1';
-				name_response = await Utils.awaitReply(message, name_prompt, 40000, true)
-			}
-			server.name = name_response || args.name
-
-			let gameport_response
-			if (args.gameport === "") {
-				const gameport_prompt = 'please enter the servers gameport, eg:64090';
-				gameport_response = await Utils.awaitReply(message, gameport_prompt, 40000, true)
-			}
-			server.gameport = gameport_response || args.gameport;
-
-			let rconport_response
-			if (args.rconport === "") {
-				const rconport_prompt = 'please enter the servers rconport, eg:64094';
-				rconport_response = await Utils.awaitReply(message, rconport_prompt, 40000, true)
-			}
-			server.rconport = rconport_response || args.rconport
-
-			let password_response
-			if (args.password === "") {
-				const password_prompt = 'please enter the servers rcon password';
-				password_response = await Utils.awaitReply(message, password_prompt, 40000, true)
-			}
-			server.password = password_response || args.password
-
-			let authkey_response
-			if (args.authkey === "") {
-				const authkey_prompt = 'please enter the servers authkey, eg:we1162e243ekose5o';
-				authkey_response = await Utils.awaitReply(message, authkey_prompt, 40000, true)
-			}
-			server.authkey = authkey_response || args.authkey;
-
-			return server
 		}
-
-		const server = await GenServerData(args)
-		Continue(server)
 	}
-
 }
