@@ -182,7 +182,7 @@ module.exports = class BotUtils {
 	}
 
 	static tomorrow(timeZone) {
-		const today = Util.today(timeZone);
+		const today = this.today(timeZone);
 		today.setDate(today.getDate() + 1);
 		return today;
 	}
