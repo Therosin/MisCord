@@ -1,4 +1,5 @@
 const { Command } = require('discord.js-commando');
+const Utils = require('../../util/BotUtils');
 const { isBlankString, awaitReply } = require('../../util/BotUtils');
 
 const CommandAllowRoles = ["Miscord-User", "miscord-user"]
@@ -166,7 +167,7 @@ module.exports = class MisAddServerCommand extends Command {
 
 		const Continue = (server) => {
 			const run = new Promise(async (fulfill, reject) => {
-				await client.MiscreatedServers.addServer(message.guild.id, server)
+				await this.client.MiscreatedServers.addServer(message.guild.id, server)
 					.then(result => { fulfill(result) })
 					.catch(err => { reject(err) })
 			})
