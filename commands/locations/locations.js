@@ -165,7 +165,7 @@ module.exports = class PlayerLocationsCommand extends Command {
                                  * TODO: select correct map from serverInfo
                                 */
                                 const playerMarker = "./assets/PlayerIcon.png"
-                                let current_map = "canyonlands"
+                                let current_map = "orca"
                                 let map_file = `./assets/${current_map}_4k.png`
                                 action = ServerApi.getPlayerLocations()
                                     .then(async (response) => {
@@ -200,25 +200,22 @@ module.exports = class PlayerLocationsCommand extends Command {
                                                         }
                                                         let bounds = { "x": 0, "y": 0 }
                                                         if (current_map == "canyonlands") {
-                                                            bounds.x = 5680
-                                                            bounds.y = 4900
+                                                            bounds.x = 4096
+                                                            bounds.y = 4096
                                                         }
                                                         if (current_map == "islands") {
-                                                            bounds.x = 8096
-                                                            bounds.y = 8096
+                                                            bounds.x = 8192
+                                                            bounds.y = 8192
                                                         }
                                                         marker.location = Map.scalePoint(marker.location, bounds)
                                                         console.log(`player ${marker.name} at X: ${marker.location.x}  Y:${marker.location.y}`)
                                                         const markerLocation = marker.location
-                                                        await Map.addImageToCanvas(playerMarker, markerLocation.x, markerLocation.y, 30, 49)
+                                                        await Map.addImageToCanvas(playerMarker, markerLocation.x, markerLocation.y, 25, 25)
                                                             .catch(err => {
                                                                 return message.say(Utils.generateFailEmbed(`Failed to Add Marker > ${err}`, "Player Locations"))
                                                             })
-                                                        const playerInfo = `
-                                                        name: ${marker.name} steamId: ${marker.steamId}
-                                                        Location: x:${marker.location.x} y:${marker.location.y} elevation: ${marker.elevation}
-                                                        `
-                                                        Map.addTextToCanvas(playerInfo, markerLocation.x, markerLocation.y - 3, '23px sans-serif', '#fc032c', 250)
+                                                        const playerInfo = `name: ${marker.name} steamId: ${marker.steamId}\nLocation: x:${marker.location.x} y:${marker.location.y} elevation: ${marker.elevation}`
+                                                        Map.addTextToCanvas(playerInfo, markerLocation.x+21, markerLocation.y, '23px sans-serif', '#fc032c', 300)
                                                     }
 
                                                     const MapImage = new Discord.MessageAttachment(Map.getImageBuffer(), `${server_data.server_id}-PlayerMap.png`)
@@ -333,7 +330,7 @@ module.exports = class PlayerLocationsCommand extends Command {
                                 break;
                             default:
                                 let embed_2 = Utils.generateFailEmbed(`unknown location Kind: ${locationsKind}`, "Location Info")
-                                return message.say(embed_3)
+                                return message.say(embed_2)
                                 break;
                         }
                         return await action.catch((error) => {

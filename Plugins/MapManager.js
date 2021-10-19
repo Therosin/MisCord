@@ -60,6 +60,8 @@ module.exports = class MapManager {
     }
 
     async addImageToCanvas(source, posX, posY, width, height) {
+        // FIX: flip y axis , canvas draws top to bottom, data is inverted
+        posY = (this.height-posY) - 5
         const context = this.canvas.getContext('2d');
         // Since the image takes time to load, we should await it
         const img = await Canvas.loadImage(source);
@@ -68,6 +70,8 @@ module.exports = class MapManager {
     }
 
     addTextToCanvas(text, posX, posY, font, colourHex, width) {
+        // FIX: flip y axis , canvas draws top to bottom, data is inverted
+        posY = (this.height-posY) - 5
         const context = this.canvas.getContext('2d');
         context.font = font || '13px sans-serif';
         context.fillStyle = colourHex || '#ffffff';
