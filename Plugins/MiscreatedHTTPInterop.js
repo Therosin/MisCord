@@ -33,16 +33,15 @@ module.exports = class MiscreatedInterop {
         return new Promise(async (resolve, reject) => {
             const response = await this.server.get(`${endpoint}${param_payload}`, {
                 transformResponse: [function (data) {
+                    let jsonData
                     try {
-                        const jsonData = JSON.parse(data);   
+                        jsonData = JSON.parse(data);
                     } catch (error) {
-                        console.error(`failed while processing remote call: ${endpoint}\n response:`)
-                        console.error(data)
-                        console.error(error);
+                        console.error(err);
+                        return reject(`failed Proccessing API Response response: ${data}\n Error: ${err}`)
                     }
-                    const server_response = jsonData || new(Object)
-                    if (!server_response && server_response.status) { return reject(`Unknown Response From API`) }
-                   return server_response.data || server_response
+                    if (!jsonData && jsonData.status) { return reject(`Unknown Response From API`) }
+                    return jsonData.data || jsonData
                 }]
             })
             let data = response.data || response
