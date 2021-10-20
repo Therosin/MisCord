@@ -36,7 +36,8 @@ module.exports = class MiscreatedInterop {
                     try {
                         const jsonData = JSON.parse(data);   
                     } catch (error) {
-                        console.error(`failed while processing remote call: ${endpoint}\n params: ${params}`)
+                        console.error(`failed while processing remote call: ${endpoint}\n response:`)
+                        console.error(data)
                         console.error(error);
                     }
                     const server_response = jsonData || new(Object)

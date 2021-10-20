@@ -29,6 +29,7 @@ function isEmpty(obj) {
 
 
 let current_map = "unset"
+
 //
 // ────────────────────────────────────────────────────────── PAGE GENERATORS ─────
 //
@@ -198,16 +199,17 @@ const GenLocationsMap = async function (kind, locationData) {
             map_loaded = true
         })
         .catch(err => {
-            return message.say(Utils.generateFailEmbed(`Failed to Load Map: ${current_map} > ${err}`, "Player Locations"))
+            console.error(`Failed to Load Map: ${current_map} > ${err}`, "Player Locations")
+            return false
         })
     if (map_loaded) {
         switch (kind) {
             case 'players':
-                Map_AddPlayerMarkers(Map, locationData)
+                await Map_AddPlayerMarkers(Map, locationData)
                 break;
 
             case 'bases':
-                Map_AddBaseMarkers(Map, locationData)
+                await Map_AddBaseMarkers(Map, locationData)
                 break;
 
             case 'airdrops':
@@ -278,170 +280,174 @@ module.exports = class PlayerLocationsCommand extends Command {
 
         this.getServerforGuild(guildId, serverIdOrName)
             .then(async (server_data) => {
+
                 if (server_data && server_data.server_id) {
-                    try {
-                        const server = new Interop(server_data.server_ip, server_data.server_rconport, server_data.server_password);
-                        // ensure we have a valid server object.
-                        if (!server.server) { reject(`failed to create misrcon interface for server: ${serverIdOrName}`); }
 
-                        const serverStatus = await server.getStatus();
-                        current_map = serverStatus.level
-                    } catch (err) {
-                        //! failed to fetch server status
-                        let embed = Utils.generateFailEmbed(`failed to fetch server Info: ${err}`, "Failed!")
-                        return message.say(embed)
-                    } finally {
-                        const ServerApi = new HTTPInterop(server_data.server_ip, server_data.server_rconport, server_data.server_authkey)
-                        if (ServerApi && locationsKind) {
-                            let action
-                            switch (locationsKind) {
-                                case "players":
-                                    /**
-                                        * TODO: select correct map from serverInfo
-                                    */
-                                    action = ServerApi.getPlayerLocations()
-                                        .then(async (response) => {
-                                            if (response) {
-                                                if (isEmpty(response)) {
-                                                    return message.say(Utils.generateFailEmbed("Server returned No Online Players", "Player Locations"))
+                    const server = new Interop(server_data.server_ip, server_data.server_rconport, server_data.server_password);
+
+                    // ensure we have a valid server object.
+                    if (!server.server) { reject(`failed to create misrcon interface for server: ${serverIdOrName}`); }
+
+                    return await server.getStatus()
+                        .then((serverStatus) => {
+                            current_map = serverStatus.level
+                            const ServerApi = new HTTPInterop(server_data.server_ip, server_data.server_rconport, server_data.server_authkey)
+                            if (ServerApi && locationsKind) {
+                                let action
+                                switch (locationsKind) {
+                                    case "players":
+                                        /**
+                                            * TODO: select correct map from serverInfo
+                                        */
+                                        action = ServerApi.getPlayerLocations()
+                                            .then(async (response) => {
+                                                if (response) {
+                                                    if (isEmpty(response)) {
+                                                        return message.say(Utils.generateFailEmbed("Server returned No Online Players", "Player Locations"))
+                                                    }
+
+                                                    if (useMap) {
+                                                        let Map = await GenLocationsMap("players", current_map, response)
+                                                        const MapImage = new Discord.MessageAttachment(Map.getImageBuffer(), `${server_data.server_id}-PlayerMap.png`)
+                                                        let PlayerMapEmbed = generateEmbed(`Map For: \`${current_map}\``, "Player Map")
+                                                        PlayerMapEmbed.attachFiles(MapImage)
+                                                        message.say(PlayerMapEmbed)
+
+                                                    } else {
+                                                        const player_entries = genPlayerPages(response)
+                                                        const player_pages = Utils.slicedArray(Array.from(player_entries), 5)
+                                                        let pages = [];
+                                                        player_pages.forEach(page => { pages.push(page.join(`\n`)) })
+                                                        return Utils.sendPagedEmbed(message, pages)
+                                                    }
                                                 }
+                                            })
 
-                                                if (useMap) {
-                                                    let Map = GenLocationsMap("players", current_map, response)
-                                                    const MapImage = new Discord.MessageAttachment(Map.getImageBuffer(), `${server_data.server_id}-PlayerMap.png`)
-                                                    let PlayerMapEmbed = generateEmbed(`Map For: \`${current_map}\``, "Player Map")
-                                                    PlayerMapEmbed.attachFiles(MapImage)
-                                                    message.say(PlayerMapEmbed)
-
-                                                } else {
-                                                    const player_entries = genPlayerPages(response)
-                                                    const player_pages = Utils.slicedArray(Array.from(player_entries), 5)
-                                                    let pages = [];
-                                                    player_pages.forEach(page => { pages.push(page.join(`\n`)) })
-                                                    return Utils.sendPagedEmbed(message, pages)
+                                        break;
+                                    case "bases":
+                                        action = ServerApi.getBaseLocations()
+                                            .then(async (response) => {
+                                                if (response) {
+                                                    if (isEmpty(response)) {
+                                                        return message.say(Utils.generateFailEmbed("Server returned No Bases", "Bases Locations"))
+                                                    }
+                                                    if (useMap) {
+                                                        let Map = await GenLocationsMap("bases", current_map, response)
+                                                        const BasesMapImage = new Discord.MessageAttachment(Map.getImageBuffer(), `${server_data.server_id}-BasesMap.png`)
+                                                        let BasesMapEmbed = generateEmbed(`Map For: \`${current_map}\``, "Bases Map")
+                                                        BasesMapEmbed.attachFiles(BasesMapImage)
+                                                        message.say(BasesMapEmbed)
+                                                    } else {
+                                                        const base_entries = genBasePages(response)
+                                                        const base_pages = Utils.slicedArray(Array.from(base_entries), 5)
+                                                        let pages = [];
+                                                        base_pages.forEach(page => { pages.push(page.join(`\n`)) })
+                                                        return Utils.sendPagedEmbed(message, pages)
+                                                    }
                                                 }
-                                            }
-                                        })
+                                            })
 
-                                    break;
-                                case "bases":
-                                    action = ServerApi.getBaseLocations()
-                                        .then((response) => {
-                                            if (response) {
-                                                if (isEmpty(response)) {
-                                                    return message.say(Utils.generateFailEmbed("Server returned No Bases", "Bases Locations"))
+                                        break;
+                                    case "airdrops":
+                                        action = ServerApi.getAirdropLocations()
+                                            .then((response) => {
+                                                if (response) {
+                                                    if (isEmpty(response)) {
+                                                        return message.say(Utils.generateFailEmbed("Server returned No Airdrops", "Airdrop Locations"))
+                                                    }
+
+                                                    if (useMap) {
+                                                        let Map = GenLocationsMap("airdrops", current_map, response)
+                                                        const AirdropMapImage = new Discord.MessageAttachment(Map.getImageBuffer(), `${server_data.server_id}-AirdropMap.png`)
+                                                        let AirdropMapEmbed = generateEmbed(`Map For: \`${current_map}\``, "Airdrop Map")
+                                                        AirdropMapEmbed.attachFiles(AirdropMapImage)
+                                                        message.say(AirdropMapEmbed)
+
+                                                    } else {
+                                                        const airdrop_entries = genAirdropPages(response)
+                                                        const airdrop_pages = Utils.slicedArray(Array.from(airdrop_entries), 5)
+                                                        let pages = [];
+                                                        airdrop_pages.forEach(page => { pages.push(page.join(`\n`)) })
+                                                        return Utils.sendPagedEmbed(message, pages)
+                                                    }
                                                 }
-                                                if (useMap) {
-                                                    let Map = GenLocationsMap("bases", current_map, response)
-                                                    const BasesMapImage = new Discord.MessageAttachment(Map.getImageBuffer(), `${server_data.server_id}-BasesMap.png`)
-                                                    let BasesMapEmbed = generateEmbed(`Map For: \`${current_map}\``, "Bases Map")
-                                                    BasesMapEmbed.attachFiles(BasesMapImage)
-                                                    message.say(BasesMapEmbed)
-                                                } else {
-                                                    const base_entries = genBasePages(response)
-                                                    const base_pages = Utils.slicedArray(Array.from(base_entries), 5)
-                                                    let pages = [];
-                                                    base_pages.forEach(page => { pages.push(page.join(`\n`)) })
-                                                    return Utils.sendPagedEmbed(message, pages)
+                                            })
+
+                                        break;
+                                    case "planecrashs":
+                                        action = ServerApi.getPlaneCrashLocations()
+                                            .then((response) => {
+                                                if (response) {
+                                                    if (isEmpty(response)) {
+                                                        return message.say(Utils.generateFailEmbed("Server returned No Planecrashes", "Planecrash Locations"))
+                                                    }
+
+                                                    if (useMap) {
+                                                        let Map = GenLocationsMap("planecrashs", current_map, response)
+                                                        const PlanecrashMapImage = new Discord.MessageAttachment(Map.getImageBuffer(), `${server_data.server_id}-PlanecrashMap.png`)
+                                                        let PlanecrashMapEmbed = generateEmbed(`Map For: \`${current_map}\``, "Planecrash Map")
+                                                        PlanecrashMapEmbed.attachFiles(PlanecrashMapImage)
+                                                        message.say(PlanecrashMapEmbed)
+
+                                                    } else {
+                                                        const planecrash_entries = genPlanecrashPages(response)
+                                                        const planecrash_pages = Utils.slicedArray(Array.from(planecrash_entries), 5)
+                                                        let pages = [];
+                                                        planecrash_pages.forEach(page => { pages.push(page.join(`\n`)) })
+                                                        return Utils.sendPagedEmbed(message, pages)
+                                                    }
                                                 }
-                                            }
-                                        })
+                                            })
 
-                                    break;
-                                case "airdrops":
-                                    action = ServerApi.getAirdropLocations()
-                                        .then((response) => {
-                                            if (response) {
-                                                if (isEmpty(response)) {
-                                                    return message.say(Utils.generateFailEmbed("Server returned No Airdrops", "Airdrop Locations"))
+                                        break;
+                                    case "vehicals":
+                                        const embed = Utils.generateFailEmbed("Not Implemented", "Vehical Locations", "under development")
+                                        return message.say(embed)
+
+                                        break;
+                                    case "tents":
+                                        action = ServerApi.getTentLocations()
+                                            .then((response) => {
+                                                if (response) {
+                                                    if (isEmpty(response)) {
+                                                        return message.say(Utils.generateFailEmbed("Server returned No Tents", "Tent Locations"))
+                                                    }
+
+                                                    if (useMap) {
+                                                        let Map = GenLocationsMap("tents", current_map, response)
+                                                        const TentMapImage = new Discord.MessageAttachment(Map.getImageBuffer(), `${server_data.server_id}-TentMap.png`)
+                                                        let TentMapEmbed = generateEmbed(`Map For: \`${current_map}\``, "Tent Map")
+                                                        TentMapEmbed.attachFiles(TentMapImage)
+                                                        message.say(TentMapEmbed)
+
+                                                    } else {
+                                                        const tent_entries = genTentPages(response)
+                                                        const tent_pages = Utils.slicedArray(Array.from(tent_entries), 5)
+                                                        let pages = [];
+                                                        tent_pages.forEach(page => { pages.push(page.join(`\n`)) })
+                                                        return Utils.sendPagedEmbed(message, pages)
+                                                    }
                                                 }
+                                            })
 
-                                                if (useMap) {
-                                                    let Map = GenLocationsMap("airdrops", current_map, response)
-                                                    const AirdropMapImage = new Discord.MessageAttachment(Map.getImageBuffer(), `${server_data.server_id}-AirdropMap.png`)
-                                                    let AirdropMapEmbed = generateEmbed(`Map For: \`${current_map}\``, "Airdrop Map")
-                                                    AirdropMapEmbed.attachFiles(AirdropMapImage)
-                                                    message.say(AirdropMapEmbed)
-
-                                                } else {
-                                                    const airdrop_entries = genAirdropPages(response)
-                                                    const airdrop_pages = Utils.slicedArray(Array.from(airdrop_entries), 5)
-                                                    let pages = [];
-                                                    airdrop_pages.forEach(page => { pages.push(page.join(`\n`)) })
-                                                    return Utils.sendPagedEmbed(message, pages)
-                                                }
-                                            }
-                                        })
-
-                                    break;
-                                case "planecrashs":
-                                    action = ServerApi.getPlaneCrashLocations()
-                                        .then((response) => {
-                                            if (response) {
-                                                if (isEmpty(response)) {
-                                                    return message.say(Utils.generateFailEmbed("Server returned No Planecrashes", "Planecrash Locations"))
-                                                }
-
-                                                if (useMap) {
-                                                    let Map = GenLocationsMap("planecrashs", current_map, response)
-                                                    const PlanecrashMapImage = new Discord.MessageAttachment(Map.getImageBuffer(), `${server_data.server_id}-PlanecrashMap.png`)
-                                                    let PlanecrashMapEmbed = generateEmbed(`Map For: \`${current_map}\``, "Planecrash Map")
-                                                    PlanecrashMapEmbed.attachFiles(PlanecrashMapImage)
-                                                    message.say(PlanecrashMapEmbed)
-
-                                                } else {
-                                                    const planecrash_entries = genPlanecrashPages(response)
-                                                    const planecrash_pages = Utils.slicedArray(Array.from(planecrash_entries), 5)
-                                                    let pages = [];
-                                                    planecrash_pages.forEach(page => { pages.push(page.join(`\n`)) })
-                                                    return Utils.sendPagedEmbed(message, pages)
-                                                }
-                                            }
-                                        })
-
-                                    break;
-                                case "vehicals":
-                                    const embed = Utils.generateFailEmbed("Not Implemented", "Vehical Locations", "under development")
-                                    return message.say(embed)
-
-                                    break;
-                                case "tents":
-                                    action = ServerApi.getTentLocations()
-                                        .then((response) => {
-                                            if (response) {
-                                                if (isEmpty(response)) {
-                                                    return message.say(Utils.generateFailEmbed("Server returned No Tents", "Tent Locations"))
-                                                }
-
-                                                if (useMap) {
-                                                    let Map = GenLocationsMap("tents", current_map, response)
-                                                    const TentMapImage = new Discord.MessageAttachment(Map.getImageBuffer(), `${server_data.server_id}-TentMap.png`)
-                                                    let TentMapEmbed = generateEmbed(`Map For: \`${current_map}\``, "Tent Map")
-                                                    TentMapEmbed.attachFiles(TentMapImage)
-                                                    message.say(TentMapEmbed)
-
-                                                } else {
-                                                    const tent_entries = genTentPages(response)
-                                                    const tent_pages = Utils.slicedArray(Array.from(tent_entries), 5)
-                                                    let pages = [];
-                                                    tent_pages.forEach(page => { pages.push(page.join(`\n`)) })
-                                                    return Utils.sendPagedEmbed(message, pages)
-                                                }
-                                            }
-                                        })
-
-                                    break;
-                                default:
-                                    let embed_2 = Utils.generateFailEmbed(`unknown location Kind: ${locationsKind}`, "Location Info")
-                                    return message.say(embed_2)
-                                    break;
+                                        break;
+                                    default:
+                                        let embed_2 = Utils.generateFailEmbed(`unknown location Kind: ${locationsKind}`, "Location Info")
+                                        return message.say(embed_2)
+                                        break;
+                                }
+                                return await action.catch((error) => {
+                                    let embed_3 = Utils.generateFailEmbed(`${error}`, "HTTP method fail")
+                                    message.say(embed_3)
+                                })
                             }
-                            return await action.catch((error) => {
-                                let embed_3 = Utils.generateFailEmbed(`${error}`, "HTTP method fail")
-                                message.say(embed_3)
-                            })
-                        }
-                    }
+                        })
+
+                        .catch((err) => {
+                            //! failed to fetch server status
+                            let embed = Utils.generateFailEmbed(`failed to fetch server Info: ${err}`, "Failed!")
+                            return message.say(embed)
+                        })
                 }
 
             })
