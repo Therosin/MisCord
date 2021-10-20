@@ -189,7 +189,7 @@ const Map_AddBaseMarkers = async function (Map, bases) {
 }
 
 
-const GenLocationsMap = function (kind, locationData) {
+const GenLocationsMap = async function (kind, locationData) {
     let map_file = `./assets/${current_map}_4k.png`
     const Map = new MapManager(2048, 2048)
     let map_loaded = false
