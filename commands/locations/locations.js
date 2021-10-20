@@ -289,7 +289,7 @@ module.exports = class PlayerLocationsCommand extends Command {
                     if (!server.server) { reject(`failed to create misrcon interface for server: ${serverIdOrName}`); }
 
                     return await server.getStatus()
-                        .then((serverStatus) => {
+                        .then(async(serverStatus) => {
                             current_map = serverStatus.level
                             const ServerApi = new HTTPInterop(server_data.server_ip, server_data.server_rconport, server_data.server_authkey)
                             if (ServerApi && locationsKind) {
