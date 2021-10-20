@@ -130,7 +130,7 @@ const GetMapBounds = function (current_map) {
     return bounds
 }
 
-const Map_AddPlayerMarkers = function (Map, players) {
+const Map_AddPlayerMarkers = async function (Map, players) {
     const playerMarker = "./assets/PlayerIcon.png"
     for (const player of players) {
         const marker = {
@@ -163,7 +163,7 @@ const Map_AddPlayerMarkers = function (Map, players) {
     }
 }
 
-const Map_AddBaseMarkers = function (Map, bases) {
+const Map_AddBaseMarkers = async function (Map, bases) {
     const baseMarker = "./assets/baseIcon.png"
     for (const base of bases) {
         const marker = {
@@ -291,7 +291,7 @@ module.exports = class PlayerLocationsCommand extends Command {
                         let embed = Utils.generateFailEmbed(`failed to fetch server Info: ${err}`, "Failed!")
                         return message.say(embed)
                     } finally {
-                        const ServerApi = new Interop(server_data.server_ip, server_data.server_rconport, server_data.server_authkey)
+                        const ServerApi = new HTTPInterop(server_data.server_ip, server_data.server_rconport, server_data.server_authkey)
                         if (ServerApi && locationsKind) {
                             let action
                             switch (locationsKind) {
