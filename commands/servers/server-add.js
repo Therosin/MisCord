@@ -187,7 +187,7 @@ module.exports = class MisAddServerCommand extends Command {
 				.finally(() => {
 					setTimeout(() => {
 						message.delete()
-					}, 500);
+					}, 2500);
 				})
 			return run
 		}

@@ -166,6 +166,7 @@ module.exports = class BotUtils {
 
 	static decrypt_data(data, key) {
 		var decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), Buffer.from(this.initialization_vector));
+		//decipher.setAutoPadding(false);
 		var decrypted = decipher.update(data, 'hex', 'utf-8');
 		decrypted += decipher.final('utf-8');
 		return decrypted;
