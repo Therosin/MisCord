@@ -18,8 +18,9 @@
 const Utils = require("../util/BotUtils")
 
 module.exports = class UserManager {
-    constructor(client) {
-        this.client = client;
+    constructor(Database) {
+        this.Database = Database;
+        return this
     }
 
     /**
@@ -31,7 +32,7 @@ module.exports = class UserManager {
             try {
 
                 // find User based on guild + provided User data
-                let user = await this.client.db.UserController.getUser(User)
+                let user = await this.Database.UserController.getUser(User)
                 if (user) {
                     fulfill(user)
                 } else {
@@ -60,7 +61,7 @@ module.exports = class UserManager {
             let UserId
             try {
                 User_data.connectId = Utils.randomString(7)
-                UserId = this.client.db.UserController.addUser(User_data)
+                UserId = this.Database.UserController.addUser(User_data)
                 if (UserId) {
                     fulfill(true, UserId)
                 }
@@ -87,7 +88,7 @@ module.exports = class UserManager {
                         reject("User not found")
                     }
                     try {
-                        fulfill(await this.client.db.UserController.delUser(UserId))
+                        fulfill(await this.Database.UserController.delUser(UserId))
                     } catch (err) {
                         reject(err);
                     }
@@ -109,7 +110,7 @@ module.exports = class UserManager {
                         reject("User not found")
                     }
                     try {
-                        fulfill(await this.client.db.UserController.updateUser(UserId, UserData))
+                        fulfill(await this.Database.UserController.updateUser(UserId, UserData))
                     } catch (err) {
                         reject(err);
                     }

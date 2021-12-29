@@ -16,16 +16,12 @@
 // along with MisCord.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-const GuildModel = require('../Models/Guilds')
+const mongoose = require('mongoose')
+const GuildModel = mongoose.models.Guilds || require('../Models/Guilds')
 
 // This isnt used for Musch at the moment, but will serve as guild(discord server) data storage for future feature implementation.
 
 module.exports = class GuildController {
-    constructor(client) {
-        this.client = client;
-    }
-
     addGuild(guild_id) {
         return new Promise(async (resolve, reject) => {
             if (!guild_id) { reject("missing guild_id") }

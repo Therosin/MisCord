@@ -21,16 +21,17 @@ const exec = require('child_process').exec;
 const { CommandoClient } = require('discord.js-commando');
 const { WebhookClient } = require('discord.js');
 const winston = require('winston');
+const MongoDBProvider = require('commando-provider-mongo').MongoDBProvider;
+const { connection } = require('mongoose')
 const MiscreatedServers = require('../Plugins/MiscreatedServers');
 const SteamWebApi = require('../Plugins/SteamWebApi')
 const UserManager = require('../Plugins/UserManager')
-const MongoDatabase = require('../Database/MongoDB');
-
+const DataManager = require('../datamanager')
 
 module.exports = class Miscord extends CommandoClient {
 	constructor(options, config) {
 		super(options);
-
+		const datamanager = new DataManager()
 		this.isDebugBuild = false
 		this.logger = winston.createLogger({
 			transports: [new winston.transports.Console()],
@@ -39,11 +40,30 @@ module.exports = class Miscord extends CommandoClient {
 				winston.format.printf(log => `[${log.timestamp}] [${log.level.toUpperCase()}]: ${log.message}`)
 			)
 		});
+		
 		this.webhook = new WebhookClient(config.WEBHOOK_ID, config.WEBHOOK_TOKEN, { disableEveryone: true });
-		this.db = new MongoDatabase(this)
-		this.UserManager = new UserManager(this)
-		this.MiscreatedServers = new MiscreatedServers(this)
-		this.SteamWebApi = new SteamWebApi(this)
+
+		datamanager.GetDatabase().then((database) => {
+			this.db = database
+			this.setProvider(
+				new MongoDBProvider(connection.getClient(), 'MisCord')
+			).catch(this.logger.error);
+		})
+		datamanager.GetUserManager().then((userManager) => {
+			this.UserManager = userManager
+		})
+		datamanager.GetMiscreatedServers().then((miscreatedServers) => {
+			this.MiscreatedServers = miscreatedServers
+		})
+		datamanager.GetSteamWebApi().then((steamWebApi) => {
+			this.SteamWebApi = steamWebApi
+		})
+
+		this.on("guildCreate", guild => {
+			console.log("Joined a new guild: " + guild.name);
+			//Your other stuff like adding to guildArray
+		})
+
 	}
 
 	async ProcRestart() {

@@ -1,15 +1,16 @@
-const ServerModel = require('../Models/Servers')
+const mongoose = require('mongoose')
+const ServerModel = mongoose.models.Servers || require('../Models/Servers')
 const Utils = require("../../util/BotUtils")
 require('dotenv').config()
-let secret = "SomeRealyLongSecretString0x02021"
 
+let secret = "SomeRealyLongSecretString0x02021"
 module.exports = class ServerController {
-    constructor(client) {
-        this.client = client;
+    constructor(secret) {
         // we can fail gracefully and fall back on Default SECRET Defined above
         // this does pose a security risk allowing multiple instances to share a db_secret
         // but honestly this should be fine as one would have to gain access to the db in the first instance
         secret = process.env.SECRET || secret;
+        console.log(`serverController loaded with Secret: ${secret}`)
     }
 
     addServer(guild, server) {

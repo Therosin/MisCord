@@ -5,18 +5,13 @@
 // Handles making requests to SteamWebapi for getting player Profile info
 
 const SteamAPI = require("steamapi")
-require('dotenv').config()
+require('dotenv').config({path:'.env.local'})
 
 const APIKEY = process.env.STEAM_APIKEY
 
 module.exports = class SteamWebApi {
-    /**
-     * create a new SteamWebApi Interface
-     * @param {*} client 
-     */
-    constructor(client) {
+    constructor() {
         // Create ApiObject
-        this.client = client
         this.steam = new SteamAPI(APIKEY)
     }
 

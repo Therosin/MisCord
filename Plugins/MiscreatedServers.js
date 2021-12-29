@@ -5,8 +5,8 @@
 // Handles management of MongoDB Database Entries for each Guilds Miscreated Servers.
 
 module.exports = class MiscreatedServers {
-    constructor(client) {
-        this.client = client;
+    constructor(Database) {
+        this.Database = Database;
     }
 
 
@@ -20,7 +20,7 @@ module.exports = class MiscreatedServers {
 
                 // try to fetch server count
                 fulfill(
-                    await this.client.db.ServerController.getServerCount(guild)
+                    await this.Database.ServerController.getServerCount(guild)
                 )
             } catch (err) {
                 reject(err);
@@ -39,7 +39,7 @@ module.exports = class MiscreatedServers {
 
                 // find server based on guild + provided server data
                 fulfill(
-                    await this.client.db.ServerController.getServer(guild, server)
+                    await this.Database.ServerController.getServer(guild, server)
                 )
             } catch (err) {
                 reject(err);
@@ -57,7 +57,7 @@ module.exports = class MiscreatedServers {
 
                 // find all servers based on guild
                 fulfill(
-                    await this.client.db.ServerController.getServers(guild)
+                    await this.Database.ServerController.getServers(guild)
                 )
             } catch (err) {
                 reject(err);
@@ -85,7 +85,7 @@ module.exports = class MiscreatedServers {
                         try {
                             server.id = Math.random().toString(36).slice(-6);
                             console.log(`creating new server: ${server.id}`)
-                            fulfill(await this.client.db.ServerController.addServer(guild, server))
+                            fulfill(await this.Database.ServerController.addServer(guild, server))
                         } catch (err) {
                             console.error(`failed to create server: ${err}`)
                             reject(err);
@@ -111,7 +111,7 @@ module.exports = class MiscreatedServers {
                         reject("server not found")
                     }
                     try {
-                        fulfill(await this.client.db.ServerController.delServer(guild, serverId))
+                        fulfill(await this.Database.ServerController.delServer(guild, serverId))
                     } catch (err) {
                         reject(err);
                     }

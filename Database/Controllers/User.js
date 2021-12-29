@@ -15,14 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with MisCord.  If not, see <http://www.gnu.org/licenses/>.
 
-const UserModel = require('../Models/Users')
-require('dotenv').config()
+const mongoose = require('mongoose')
+const UserModel = mongoose.models.Users || require('../Models/Users')
 
 module.exports = class UserController {
-    constructor(client) {
-        this.client = client;
-    }
-
     addUser(User) {
         return new Promise(async (resolve, reject) => {
             const doc = new UserModel({
