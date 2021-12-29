@@ -16,3 +16,4 @@ okteto.yml
 .env
 
 package-lock.json
+WebService/.next/*/*
