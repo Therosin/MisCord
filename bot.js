@@ -21,11 +21,12 @@
 // ───────────────────────────────────────────────────────── BOT DEPENDANCIES ─────
 // 	
 const MisCord = require('./Modules/Client');
+
 // General
 const path = require('path');
 const oneLine = require('common-tags').oneLine;
 const { getAllGuildsCount } = require('./util/BotUtils')
-require('dotenv').config()
+require('dotenv').config({ path: './.env.local' })
 
 let config = {
 	WEBHOOK_ID: process.env.WEBHOOK_ID,
@@ -138,7 +139,6 @@ client.on('message', async message => {
 	}
 });
 // ────────────────────────────────────────────────────────────────────────────────
-
 
 client.registry
 	.registerGroup('general', 'General')
