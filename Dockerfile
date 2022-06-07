@@ -2,7 +2,7 @@ FROM node:12-alpine
 ENV PORT=8080
 WORKDIR /opt/app
 # Extras:
-RUN apk --update add make python gcc g++ libtool git autoconf automake
+RUN apk --update add make python3 gcc g++ libtool git autoconf automake
 
 # Globally installed NPMs:
 RUN npm install -g pm2
